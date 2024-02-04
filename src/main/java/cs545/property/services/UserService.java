@@ -72,6 +72,12 @@ public class UserService {
         return userRepo.findAll().stream().map(u -> new UserDto(u)).toList();
     }
 
+
+    @Transactional
+    public List<UserDto> getAllByRoleName(String roleName) {
+        return userRepo.findByRolesNameEquals(roleName).stream().map(u -> new UserDto(u)).toList();
+    }
+
     @Transactional
     public UserDto getById(Long id) {
         var u = userRepo.getReferenceById(id);

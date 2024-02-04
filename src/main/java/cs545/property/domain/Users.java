@@ -26,7 +26,7 @@ public class Users {
 
     private String password;
 
-    private Boolean isPendingApproval= false;
+    private Boolean isPendingApproval= true;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Role> roles= new ArrayList<>();

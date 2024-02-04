@@ -4,6 +4,7 @@ package cs545.property.controller;
 import cs545.property.anotations.LogExecutionTime;
 import cs545.property.dto.UserRequest;
 import cs545.property.services.UserService;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,11 @@ public class UsersController {
         return ResponseEntity.ok(service.getAll());
     }
 
+    @GetMapping("/roles/{roleName}")
+    public ResponseEntity<?> getByRole(@PathVariable String roleName) {
+
+        return ResponseEntity.ok(service.getAllByRoleName(roleName));
+    }
     @LogExecutionTime
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
