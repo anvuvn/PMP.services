@@ -1,5 +1,6 @@
 package cs545.property.domain;
 
+import cs545.property.constant.UserRolesEnum;
 import cs545.property.dto.UserRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,19 @@ public class Users {
         name = dto.getName();
     }
 
+    public Boolean isAdmin(){
+        return isInRole(UserRolesEnum.Admin);
+    }
+    public Boolean isInRole(UserRolesEnum role){
+        return roles.stream().filter(r->r.getRole() == role).toList().size()>0;
+    }
+    public Boolean isOwner(){
+        return isInRole(UserRolesEnum.Owner);
+    }
+
+    public Boolean isCustomer(){
+        return isInRole(UserRolesEnum.Customer);
+    }
     @Override
     public String toString() {
         return "Users{" +

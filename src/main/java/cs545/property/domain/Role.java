@@ -28,5 +28,18 @@ public class Role {
     private UserRolesEnum role;
     public Role(String name) {
         this.name = name;
+       switch (name){
+           case "Admin":
+               role = UserRolesEnum.Admin;
+               break;
+           case "Owner":
+               role = UserRolesEnum.Owner;
+               break;
+           case "Customer":
+               role = UserRolesEnum.Customer;
+               break;
+           default:
+               throw new RuntimeException("Role not support for user:" + name);
+       }
     }
 }
