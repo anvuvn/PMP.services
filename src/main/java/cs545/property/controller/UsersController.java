@@ -13,6 +13,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UsersController {
     @Autowired
     UserService service;
