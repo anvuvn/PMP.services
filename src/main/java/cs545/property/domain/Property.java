@@ -1,5 +1,6 @@
 package cs545.property.domain;
 
+import cs545.property.domain.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,9 +12,10 @@ public class Property {
     @Id
     @GeneratedValue
     Long id;
-    String homeType;
 
-    String propertyType;
+    @Enumerated(EnumType.STRING)
+    PropertyType propertyType;
+
     Double price;
 
     @OneToOne
