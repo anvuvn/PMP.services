@@ -72,7 +72,8 @@ public class SecurityConfig {
                 .requestMatchers("/authenticate/**").permitAll()
                 .requestMatchers("/property/**").permitAll()
                 .requestMatchers("/image/**").permitAll()
-
+                .requestMatchers("/messages").authenticated()
+                .requestMatchers("/messages/**").authenticated()
                 .requestMatchers("/admin/**").hasAnyAuthority("Admin")
                 .requestMatchers("/**").hasAnyAuthority("User","Admin")
                 .anyRequest()

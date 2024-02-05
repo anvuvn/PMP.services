@@ -28,6 +28,7 @@ public class UsersController {
     }
 
 
+
     @GetMapping
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(service.getAll());
