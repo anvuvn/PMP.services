@@ -1,17 +1,15 @@
-package cs545.property.domain;
+package cs545.property.dto;
 
-import cs545.property.dto.AddressDto;
-import jakarta.persistence.*;
+import cs545.property.domain.Address;
+import cs545.property.domain.State;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @NoArgsConstructor
-public class Address {
-
-    @Id
-    @GeneratedValue
+public class AddressDto {
     private Integer id;
 
     private String line1;
@@ -22,10 +20,9 @@ public class Address {
 
     private String postalCode;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private State state;
+    //private State state;
 
-    public Address(AddressDto a){
+    public AddressDto(Address a){
         id = a.getId();
         line1=a.getLine1();
         line2 = a.getLine2();

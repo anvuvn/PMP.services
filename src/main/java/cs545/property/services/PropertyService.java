@@ -1,7 +1,9 @@
 package cs545.property.services;
 
 
+import cs545.property.domain.Address;
 import cs545.property.domain.Property;
+import cs545.property.dto.PropertyAddRequest;
 import cs545.property.dto.UserDto;
 import cs545.property.repository.PropertyRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,19 @@ public class PropertyService {
 
     @Transactional
     public Property SaveProperty(Property property) {
+        var p = propertyRepo.save(property);
+
+        if (p == null)
+            return null;
+        return p;
+    }
+
+    @Transactional
+    public Property AddProperty(PropertyAddRequest model) {
+        var property = new Property();
+        property.setPropertyType(model.getPropertyType());
+        property.setAddress(new Address(model.getAddress()));
+        property.setPrice(model.getPrice());
         var p = propertyRepo.save(property);
 
         if (p == null)

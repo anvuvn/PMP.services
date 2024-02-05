@@ -70,7 +70,8 @@ public class SecurityConfig {
 
                 .authorizeRequests()
                 .requestMatchers("/authenticate/**").permitAll()
-                .requestMatchers("/property/**").permitAll()
+                .requestMatchers("/properties").permitAll()
+                .requestMatchers("/properties/**").permitAll()
                 .requestMatchers("/image/**").permitAll()
                 .requestMatchers("/messages").authenticated()
                 .requestMatchers("/messages/**").authenticated()

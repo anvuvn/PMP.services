@@ -18,7 +18,7 @@ public class Property {
 
     Double price;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     Address address;
 

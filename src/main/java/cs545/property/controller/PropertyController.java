@@ -4,6 +4,7 @@ import cs545.property.domain.Property;
 import cs545.property.domain.PropertyImage;
 import cs545.property.dto.PropertyAddRequest;
 import cs545.property.dto.PropertyImageResponse;
+import cs545.property.dto.PropertyResponseDto;
 import cs545.property.services.FileUploadService;
 import cs545.property.services.PropertyService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "property")
+@RequestMapping(value = "properties")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5175"})
 public class PropertyController {
 
@@ -44,9 +45,15 @@ public class PropertyController {
     }
 
     @PostMapping
-    public  String addProperty(@RequestBody PropertyAddRequest property)
+    public PropertyResponseDto addProperty(@RequestBody PropertyAddRequest property)
     {
-        return "";
+
+        return  new PropertyResponseDto(propertyService.AddProperty(property));
+    }
+    @GetMapping("/status/{status}")
+    public List<Property> getPropertyByStatus(@PathVariable String status)
+    {
+        return propertyService.getAll();
     }
 
 
