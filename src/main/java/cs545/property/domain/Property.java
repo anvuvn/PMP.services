@@ -1,9 +1,10 @@
 package cs545.property.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import cs545.property.domain.enums.PropertyType;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -11,10 +12,16 @@ public class Property {
     @Id
     @GeneratedValue
     Long id;
-    String homeType;
-    String propertyType;
-    Double price;
-    String location;
-    String name;
 
+    @Enumerated(EnumType.STRING)
+    PropertyType propertyType;
+
+    Double price;
+
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    Address address;
+
+    @OneToMany
+    List<PropertyImage> images;
 }

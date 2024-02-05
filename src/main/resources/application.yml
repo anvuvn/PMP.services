@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: property-management
+  datasource:
+    password: 1
+    url: jdbc:postgresql://localhost:5432/property_management
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+    show-sql: true
+    defer-datasource-initialization: true
+    generate-ddl: true
+  sql:
+    init:
+      mode: always
+server:
+  port: 8080
+logging:
+  level:
+    root: warn
