@@ -70,6 +70,8 @@ public class SecurityConfig {
 
                 .authorizeRequests()
                 .requestMatchers("/authenticate/**").permitAll()
+                .requestMatchers("/messages").authenticated()
+                .requestMatchers("/messages/**").authenticated()
                 .requestMatchers("/admin/**").hasAnyAuthority("Admin")
                 .requestMatchers("/**").hasAnyAuthority("User","Admin")
                 .anyRequest()
