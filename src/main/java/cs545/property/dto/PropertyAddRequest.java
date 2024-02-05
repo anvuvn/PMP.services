@@ -14,5 +14,6 @@ public class PropertyAddRequest {
     PropertyType propertyType;
     Double price;
     AddressDto address;
+    Long ownerId;
 
 }
