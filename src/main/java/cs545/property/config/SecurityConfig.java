@@ -70,6 +70,9 @@ public class SecurityConfig {
 
                 .authorizeRequests()
                 .requestMatchers("/authenticate/**").permitAll()
+                .requestMatchers("/property/**").permitAll()
+                .requestMatchers("/image/**").permitAll()
+
                 .requestMatchers("/admin/**").hasAnyAuthority("Admin")
                 .requestMatchers("/**").hasAnyAuthority("User","Admin")
                 .anyRequest()
