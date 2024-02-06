@@ -1,5 +1,6 @@
 package cs545.property.domain;
 
+import cs545.property.constant.PropertyTransactionStatus;
 import cs545.property.domain.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -24,4 +25,13 @@ public class Property {
 
     @OneToMany
     List<PropertyImage> images;
+
+    @OneToMany(mappedBy = "property")
+    private List<Offer> offers;
+
+    @ManyToOne
+    private Owner owner;
+
+    @Enumerated(EnumType.STRING)
+    private PropertyTransactionStatus propertyStatus;
 }

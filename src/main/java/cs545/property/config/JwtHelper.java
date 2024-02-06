@@ -71,10 +71,16 @@ public class JwtHelper {
                 .parseClaimsJws(token)
                 .getBody();
         LinkedHashMap map = (LinkedHashMap) tokenBody.get("user");
-        return Users.builder().id((Long) map.get("userId"))
+
+        // Convert the userId to Long
+        Long userId = map.get("userId") instanceof Integer ?
+                ((Integer) map.get("userId")).longValue() :
+                (Long) map.get("userId");
+
+        return Users.builder()
+                .id(userId)
                 .name(map.get("username").toString())
                 .build();
-                //.roles(map.get("roles")).build();
     }
     public boolean validateToken(String token) {
         try {
