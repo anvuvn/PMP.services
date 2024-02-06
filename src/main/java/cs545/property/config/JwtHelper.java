@@ -23,7 +23,7 @@ public class JwtHelper {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + (expiration * 48)))//30m * 48= 24hrs
                 .claim("user", user)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
