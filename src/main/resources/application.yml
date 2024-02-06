@@ -2,9 +2,9 @@ spring:
   application:
     name: property-management
   datasource:
-    password: mypassword
+    password: 1
     url: jdbc:postgresql://localhost:5432/property_management
-    username: user_name
+    username: postgres
   jpa:
     hibernate:
       ddl-auto: update
