@@ -70,7 +70,7 @@ public class SecurityConfig {
 
                 .authorizeRequests()
                 .requestMatchers("/authenticate/**").permitAll()
-                .requestMatchers("/favourites").permitAll()
+                .requestMatchers("/favourites").authenticated()
                 .requestMatchers("/favourites/**").authenticated()
                 .requestMatchers("/offers").authenticated()
                 .requestMatchers("/offers/user").authenticated()
