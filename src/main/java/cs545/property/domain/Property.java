@@ -1,5 +1,6 @@
 package cs545.property.domain;
 
+import cs545.property.constant.PropertyStatus;
 import cs545.property.constant.PropertyTransactionStatus;
 import cs545.property.domain.enums.PropertyType;
 import jakarta.persistence.*;
@@ -23,8 +24,14 @@ public class Property {
     @JoinColumn(name = "address_id")
     Address address;
 
+    @ManyToOne
+    Users owner;
+
     @OneToMany
     List<PropertyImage> images;
+
+    @Enumerated(EnumType.STRING)
+    PropertyStatus status = PropertyStatus.Waiting;
 
     @OneToMany(mappedBy = "property")
     private List<Offer> offers;

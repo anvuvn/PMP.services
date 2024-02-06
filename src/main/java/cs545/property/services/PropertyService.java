@@ -1,9 +1,11 @@
 package cs545.property.services;
 
 
+import cs545.property.constant.PropertyStatus;
 import cs545.property.domain.Address;
 import cs545.property.domain.Property;
 import cs545.property.dto.PropertyAddRequest;
+import cs545.property.dto.PropertyResponseDto;
 import cs545.property.dto.UserDto;
 import cs545.property.repository.PropertyRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class PropertyService {
 
 
@@ -57,4 +60,15 @@ public class PropertyService {
     }
 
 
+    @Transactional
+    public List<PropertyResponseDto> getPropertiesByOwnerId(Long ownerId) {
+        return propertyRepo.findByOwnerId(ownerId).stream().map(p->new PropertyResponseDto(p)).toList();
+    }
+
+    public PropertyResponseDto approveProperty(Long id){
+        var p = propertyRepo.getReferenceById(id);
+        p.setStatus(PropertyStatus.Available);
+        propertyRepo.save(p);
+        return new PropertyResponseDto(p);
+    }
 }
