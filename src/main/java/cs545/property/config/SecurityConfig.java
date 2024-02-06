@@ -4,7 +4,6 @@ package cs545.property.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -71,13 +70,13 @@ public class SecurityConfig {
 
                 .authorizeRequests()
                 .requestMatchers("/authenticate/**").permitAll()
-
-                .requestMatchers(HttpMethod.POST, "/properties").authenticated() //.permitAll()
-
+                .requestMatchers("/favourites").authenticated()
+                .requestMatchers("/favourites/**").authenticated()
+                .requestMatchers("/offers").authenticated()
+                .requestMatchers("/offers/user").authenticated()
                 .requestMatchers("/properties").permitAll()
-
                 .requestMatchers("/properties/**").permitAll()
-                .requestMatchers("/images/**").permitAll()
+                .requestMatchers("/image/**").permitAll()
                 .requestMatchers("/messages").authenticated()
                 .requestMatchers("/messages/**").authenticated()
                 .requestMatchers("/admin/**").hasAnyAuthority("Admin")

@@ -1,16 +1,11 @@
 package cs545.property.controller;
 
-
 import cs545.property.anotations.LogExecutionTime;
 import cs545.property.dto.UserRequest;
 import cs545.property.services.UserService;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/users")
@@ -19,15 +14,10 @@ public class UsersController {
     @Autowired
     UserService service;
 
-
     @PostMapping
     public ResponseEntity<?> AddUser(@RequestBody UserRequest model) {
-
         return ResponseEntity.ok(service.AddUser(model));
-
     }
-
-
 
     @GetMapping
     public ResponseEntity<?> getAll() {
@@ -36,17 +26,15 @@ public class UsersController {
 
     @GetMapping("/roles/{roleName}")
     public ResponseEntity<?> getByRole(@PathVariable String roleName) {
-
         return ResponseEntity.ok(service.getAllByRoleName(roleName));
     }
+
     @LogExecutionTime
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         var u = service.getById(id);
         return ResponseEntity.ok(u);
     }
-
-
 
     @GetMapping("/throws")
     public ResponseEntity<?> error() {

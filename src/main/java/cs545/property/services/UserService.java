@@ -1,5 +1,6 @@
 package cs545.property.services;
 
+import cs545.property.config.JwtHelper;
 import cs545.property.domain.Customer;
 import cs545.property.domain.Owner;
 import cs545.property.domain.Role;
@@ -10,11 +11,16 @@ import cs545.property.repository.CustomerRepo;
 import cs545.property.repository.OwnerRepo;
 import cs545.property.repository.RoleRepo;
 import cs545.property.repository.UserRepository;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +40,9 @@ public class UserService {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    JwtHelper jwtHelper;
 
     @Transactional
     public UserDto AddUser(UserRequest model) {
@@ -86,6 +95,28 @@ public class UserService {
             return null;
         return new UserDto(u);
     }
+
+    public Users getLoggedInUser(HttpServletRequest request) {
+        // Get the JWT token from the Authorization header
+        String token = extractTokenFromHeader(request);
+
+        Users user = jwtHelper.getLoggedInUser(token);
+
+        return user;
+    }
+
+    // Helper method to extract the JWT token from the Authorization header
+    private String extractTokenFromHeader(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7); // Skip "Bearer " prefix
+        }
+
+        return null;
+    }
+
+
 
 
 }
