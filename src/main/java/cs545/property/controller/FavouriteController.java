@@ -26,4 +26,15 @@ public class FavouriteController {
         var userId = user.getUserId();
         return ResponseEntity.ok(service.getByUserId(userId));
     }
+
+    @DeleteMapping("/{favId}")
+    public ResponseEntity<?> deleteFav(@PathVariable Long favId) {
+        try{
+            if (!service.removeFavourite(favId))
+                return ResponseEntity.status(404).build();
+        }catch (RuntimeException e){
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.status(200).build();
+    }
 }
