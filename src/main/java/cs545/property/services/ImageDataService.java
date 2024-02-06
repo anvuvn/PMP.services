@@ -2,6 +2,7 @@ package cs545.property.services;
 
 import cs545.property.domain.ImageData;
 import cs545.property.dto.ImageDataResponse;
+import cs545.property.dto.ThumbsImageDataResponse;
 import cs545.property.repository.ImageDataRepository;
 import cs545.property.repository.PropertyRepo;
 import cs545.property.util.ImageUtil;
@@ -116,6 +117,26 @@ public class ImageDataService {
             result.add(new ImageDataResponse(
                     i.getId(),ImageUtil.decompressImage(i.getImageData()))
             );
+        });
+        return result;
+    }
+
+    public List<ThumbsImageDataResponse> getThumbByIds(Long[] ids) {
+        //
+        var result = new ArrayList<ThumbsImageDataResponse>();
+        Arrays.stream(ids).forEach(id-> {
+            //
+            var imgs = propertyRepository.getReferenceById(id).getImages();
+            if (imgs != null)
+            {
+                var img = imgs.get(0);
+                result.add(
+                    new ThumbsImageDataResponse(
+                        id,
+                        ImageUtil.decompressImage(img.getImageData())
+                    )
+                );
+            }
         });
         return result;
     }

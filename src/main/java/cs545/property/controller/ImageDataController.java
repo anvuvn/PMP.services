@@ -1,5 +1,7 @@
 package cs545.property.controller;
 import cs545.property.domain.ImageData;
+import cs545.property.domain.Property;
+import cs545.property.dto.ThumbsImageDataResponse;
 import cs545.property.services.ImageDataService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +50,16 @@ public class ImageDataController {
                 .body(data);
     }
 
+    @GetMapping("/thumbnail")
+    public ResponseEntity<List<ThumbsImageDataResponse>> getThumbnailImages(@RequestParam("ids") Long[] ids)
+    {
+        var data = imageDataService.getThumbByIds(ids);
+        return new ResponseEntity(data, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/all")
     public ResponseEntity<?>  getAll(){
         var data = imageDataService.getAll();
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(data);
     }
@@ -59,11 +67,7 @@ public class ImageDataController {
     @GetMapping("/info/{name}")
     public ResponseEntity<?>  getImageInfoByName(@PathVariable("name") String name){
         ImageData image = imageDataService.getInfoByImageByName(name);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(image);
     }
-
-
-
 }
