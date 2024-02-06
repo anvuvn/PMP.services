@@ -70,6 +70,8 @@ public class SecurityConfig {
 
                 .authorizeRequests()
                 .requestMatchers("/authenticate/**").permitAll()
+                .requestMatchers("/favourites").permitAll()
+                .requestMatchers("/favourites/**").permitAll()
                 .requestMatchers("/properties").permitAll()
                 .requestMatchers("/properties/**").permitAll()
                 .requestMatchers("/image/**").permitAll()
