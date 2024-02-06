@@ -8,6 +8,7 @@ import cs545.property.dto.PropertyAddRequest;
 import cs545.property.dto.PropertyResponseDto;
 import cs545.property.dto.UserDto;
 import cs545.property.repository.PropertyRepo;
+import cs545.property.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,10 @@ public class PropertyService {
 
     @Autowired
     PropertyRepo propertyRepo;
+
+
+    @Autowired
+    UserRepository userRepo;
 
     @Transactional
     public List<Property> getAll() {
@@ -52,6 +57,7 @@ public class PropertyService {
         property.setPropertyType(model.getPropertyType());
         property.setAddress(new Address(model.getAddress()));
         property.setPrice(model.getPrice());
+        property.setOwner(userRepo.getReferenceById(model.getOwnerId()));
         var p = propertyRepo.save(property);
 
         if (p == null)

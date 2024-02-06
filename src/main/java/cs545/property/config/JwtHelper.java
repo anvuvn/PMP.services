@@ -16,7 +16,7 @@ public class JwtHelper {
     @Value("${jwt.secret-key:EAcs544123456789EAcs544123456789EAcs544123456789}")
     private String secret;
 
-    @Value("${jwt.expiration:1800000}")
+    @Value("${jwt.expiration:18000000}")
     private long expiration;
 
     public String generateToken(UserDetailDto user) {

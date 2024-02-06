@@ -20,7 +20,7 @@ public class AddressDto {
 
     private String postalCode;
 
-    //private State state;
+    private String state;
 
     public AddressDto(Address a){
         id = a.getId();
@@ -28,6 +28,6 @@ public class AddressDto {
         line2 = a.getLine2();
         city =a.getCity();
         postalCode = a.getPostalCode();
-        //state = a.getState();
+        state = a.getState();
     }
 }

@@ -4,6 +4,7 @@ import cs545.property.constant.PropertyStatus;
 import cs545.property.domain.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
 
 import java.util.List;
 
@@ -26,8 +27,9 @@ public class Property {
     @ManyToOne
     Users owner;
 
-    @OneToMany
-    List<PropertyImage> images;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name="property_id")
+    List<ImageData> images;
 
     @Enumerated(EnumType.STRING)
     PropertyStatus status = PropertyStatus.Waiting;

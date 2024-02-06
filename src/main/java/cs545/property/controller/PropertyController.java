@@ -2,25 +2,16 @@ package cs545.property.controller;
 
 import cs545.property.config.UserDetailDto;
 import cs545.property.domain.Property;
-import cs545.property.domain.PropertyImage;
 import cs545.property.dto.PropertyAddRequest;
-import cs545.property.dto.PropertyImageResponse;
 import cs545.property.dto.PropertyResponseDto;
-import cs545.property.services.FileUploadService;
 import cs545.property.services.PropertyService;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "properties")
@@ -44,9 +35,12 @@ public class PropertyController {
     }
 
     @PostMapping
-    public PropertyResponseDto addProperty(@RequestBody PropertyAddRequest property)
-    {
-
+    @Transactional
+    public PropertyResponseDto addProperty(@RequestBody PropertyAddRequest property) throws IllegalAccessException {
+        var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        var userId = user.getUserId();
+        property.setOwnerId(userId);
+        //
         return  new PropertyResponseDto(propertyService.AddProperty(property));
     }
     @GetMapping("/status/{status}")
