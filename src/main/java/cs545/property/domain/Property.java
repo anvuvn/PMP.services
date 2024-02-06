@@ -1,5 +1,6 @@
 package cs545.property.domain;
 
+import cs545.property.constant.PropertyStatus;
 import cs545.property.domain.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -18,10 +19,16 @@ public class Property {
 
     Double price;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     Address address;
 
+    @ManyToOne
+    Users owner;
+
     @OneToMany
     List<PropertyImage> images;
+
+    @Enumerated(EnumType.STRING)
+    PropertyStatus status = PropertyStatus.Waiting;
 }
