@@ -36,6 +36,4 @@ public class Property {
     @OneToMany(mappedBy = "property")
     private List<Offer> offers;
 
-    @Enumerated(EnumType.STRING)
-    private PropertyTransactionStatus propertyStatus;
 }
