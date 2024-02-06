@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/image")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5175", "http://localhost:3295"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8961"})
 public class ImageDataController {
 
     @Autowired

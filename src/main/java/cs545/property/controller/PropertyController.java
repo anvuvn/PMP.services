@@ -32,15 +32,15 @@ public class PropertyController {
     private PropertyService propertyService;
 
     @GetMapping
-    public List<Property> getAllProperties()
+    public ResponseEntity<List<Property>> getAllProperties()
     {
-        return propertyService.getAll();
+        return new ResponseEntity<>(propertyService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Property getPropertyById(@RequestParam Long id)
+    public ResponseEntity<Property> getPropertyById(@RequestParam Long id)
     {
-        return propertyService.getById(id);
+        return new ResponseEntity(propertyService.getById(id), HttpStatus.OK);
     }
 
     @PostMapping

@@ -19,6 +19,5 @@ public class Address {
 
     private String postalCode;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private State state;
+    private String state;
 }
