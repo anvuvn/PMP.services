@@ -5,7 +5,8 @@ public enum PropertyStatus {
     Available("Available"),
     Contingent("Contingent"),
     Sold("Sold"),
-    Pending("Pending");
+    Pending("Pending"),
+    Deleted("Deleted");
 
     private String status;
     PropertyStatus(String status){

@@ -36,7 +36,7 @@ public class PropertyService {
 
     @Transactional
     public List<Property> getAll() {
-        return propertyRepo.findAll().stream().toList();
+        return propertyRepo.findAll().stream().filter(p -> !p.getStatus().equals(PropertyStatus.Deleted)).toList();
     }
 
     @Transactional
@@ -77,7 +77,7 @@ public class PropertyService {
 
     @Transactional
     public List<PropertyResponseDto> getPropertiesByOwnerId(Long ownerId) {
-        return propertyRepo.findByOwnerId(ownerId).stream().map(p -> new PropertyResponseDto(p)).toList();
+        return propertyRepo.findByOwnerId(ownerId).stream().filter(p -> !p.getStatus().equals(PropertyStatus.Deleted)).map(p -> new PropertyResponseDto(p)).toList();
     }
 
     public PropertyResponseDto approveProperty(Long id) {
