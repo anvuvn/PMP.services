@@ -28,7 +28,7 @@ public class Property {
     @ManyToOne
     Users owner;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="property_id")
     List<ImageData> images;
 

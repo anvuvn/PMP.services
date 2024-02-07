@@ -3,6 +3,7 @@ package cs545.property.controller;
 import cs545.property.config.UserDetailDto;
 import cs545.property.domain.Property;
 import cs545.property.dto.PropertyAddRequest;
+import cs545.property.dto.PropertyGridResponse;
 import cs545.property.dto.PropertyResponseDto;
 import cs545.property.services.PropertyService;
 import jakarta.transaction.Transactional;
@@ -12,11 +13,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "properties")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5175"})
+@RequestMapping(value = "/properties")
+@CrossOrigin(origins ="http://localhost:3000")
 public class PropertyController {
 
 
@@ -24,13 +27,29 @@ public class PropertyController {
     private PropertyService propertyService;
 
     @GetMapping
-    public ResponseEntity<List<Property>> getAllProperties()
+    public ResponseEntity<List<PropertyGridResponse>> getAllProperties()
+    {
+////        var props = propertyService.getAll();
+////        var result = new ArrayList<PropertyGridResponse>();
+////
+////        props.forEach(p -> {
+////            var
+//
+//        });
+
+        return new
+                ResponseEntity<>(propertyService.getAll().stream().map(p->new PropertyGridResponse(p)).toList(), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Property>> getAll()
     {
         return new ResponseEntity<>(propertyService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Property> getPropertyById(@RequestParam Long id)
+    public ResponseEntity<Property> getPropertyById(@PathVariable Long id)
     {
         return new ResponseEntity(propertyService.getById(id), HttpStatus.OK);
     }

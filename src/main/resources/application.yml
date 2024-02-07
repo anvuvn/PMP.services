@@ -9,6 +9,9 @@ spring:
     password: 1
     url: jdbc:postgresql://localhost:5432/property_management
     username: postgres
+    hikari:
+      auto-commit: false
+
   jpa:
     hibernate:
       ddl-auto: update

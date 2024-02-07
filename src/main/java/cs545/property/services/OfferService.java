@@ -1,6 +1,7 @@
 package cs545.property.services;
 
 import cs545.property.constant.OfferStatus;
+import cs545.property.constant.PropertyStatus;
 import cs545.property.constant.PropertyTransactionStatus;
 import cs545.property.domain.Customer;
 import cs545.property.domain.Offer;
@@ -83,7 +84,7 @@ public class OfferService {
     }
 
     private void syncPropertyStatusOnCreate(Property property) {
-        property.setPropertyStatus(PropertyTransactionStatus.Pending);
+        property.setStatus(PropertyStatus.Waiting);
 
         propertyRepository.save(property);
     }
@@ -91,7 +92,7 @@ public class OfferService {
     private void validateOfferCreate(Property property) {
         List<PropertyTransactionStatus> allowedStatus = Arrays.asList(PropertyTransactionStatus.Available, PropertyTransactionStatus.Pending);
 
-        if (property == null || !allowedStatus.contains(property.getPropertyStatus()))
+        if (property == null || !allowedStatus.contains(property.getStatus()))
             return;
         //throw new ErrorException("Not Allowed");
     }
@@ -123,9 +124,9 @@ public class OfferService {
                     .stream()
                     .anyMatch(o -> o.getStatus() == OfferStatus.created);
 
-            property.setPropertyStatus(hasOtherActiveOffers ? PropertyTransactionStatus.Pending : PropertyTransactionStatus.Available);
+            property.setStatus(hasOtherActiveOffers ? PropertyStatus.Waiting : PropertyStatus.Available);
         } else if (offer.getStatus() == OfferStatus.contingent) {
-            property.setPropertyStatus(PropertyTransactionStatus.Contingent);
+            property.setStatus(PropertyStatus.Contingent);
         }
 
         propertyRepository.save(property);
@@ -139,9 +140,9 @@ public class OfferService {
         boolean isCurrentUsersProperty = offer.getProperty().getOwner().getId() == user.getId();
         boolean isCurrentUsersOffer = offer.getProperty().getOwner().getId() != user.getId();
 
-        boolean isAllowed = (user.getRoles().contains("Owner") && isCurrentUsersProperty && allowedForOwner.contains(status) && offer.getProperty().getPropertyStatus() == PropertyTransactionStatus.Pending)
+        boolean isAllowed = (user.getRoles().contains("Owner") && isCurrentUsersProperty && allowedForOwner.contains(status) && offer.getProperty().getStatus() == PropertyStatus.Waiting)
                 ||
-                (user.getRoles().contains("Customer") && isCurrentUsersOffer && allowedForCustomer.contains(status) && offer.getStatus() != OfferStatus.contingent && offer.getProperty().getPropertyStatus() != PropertyTransactionStatus.Pending);
+                (user.getRoles().contains("Customer") && isCurrentUsersOffer && allowedForCustomer.contains(status) && offer.getStatus() != OfferStatus.contingent && offer.getProperty().getStatus() != PropertyStatus.Waiting);
 
         if (!isAllowed)
             throw new ErrorException("Cannot perform given status change");
