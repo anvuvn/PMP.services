@@ -34,12 +34,12 @@ public class Image3DController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<Object> getImage3DByProperyId(@RequestParam("property_id") Long property_id, @RequestParam("file") MultipartFile file) {
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Object> getImage3DByProperyId(@PathVariable("id") Long id) {
 
         try {
 
-            var data = image3DService.getByPropertyId(property_id);
+            var data = image3DService.getByPropertyId(id);
             return new ResponseEntity<>(data, HttpStatus.OK);
 
         }
