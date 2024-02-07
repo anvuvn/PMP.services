@@ -1,12 +1,14 @@
 package cs545.property.services;
 
+import cs545.property.config.UserDetailDto;
 import cs545.property.constant.OfferStatus;
 import cs545.property.constant.PropertyStatus;
 import cs545.property.constant.PropertyTransactionStatus;
-import cs545.property.domain.Customer;
 import cs545.property.domain.Offer;
+import cs545.property.domain.Owner;
 import cs545.property.domain.Property;
 import cs545.property.domain.Users;
+import cs545.property.dto.AcceptOfferRequest;
 import cs545.property.dto.OfferDto;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
@@ -18,6 +20,7 @@ import cs545.property.repository.UserRepository;
 import cs545.property.util.ListMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,4 +150,47 @@ public class OfferService {
         if (!isAllowed)
             throw new ErrorException("Cannot perform given status change");
     }
+
+    private Offer changeOfferStatus(Long offerId, OfferStatus status) {
+        var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        if (!user.isOwner()) {
+            throw new RuntimeException("Permission dennied! - Only Owner can accept Offer");
+        }
+
+        var offer = (offerRepository.findById(offerId)).get();
+        offer.setStatus(status);
+        offerRepository.save(offer);
+        return offer;
+    }
+
+    public GenericActivityResponse ownerAcceptOffer(AcceptOfferRequest model) {
+        var offer = changeOfferStatus(model.getOfferId(), OfferStatus.OwnerAccepted);
+        var property = offer.getProperty();
+        property.setStatus(PropertyStatus.Pending);
+        propertyRepository.save(property);
+        return new GenericActivityResponse(true, "Offer Accepted", offer);
+    }
+
+    public GenericActivityResponse customerAcceptOffer(AcceptOfferRequest model) {
+        var offer = (offerRepository.findById(model.getOfferId())).get();
+        var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        if(!offer.getCustomer().getId().equals(user.getUserId())){//make sure customer can accept his offer only
+            throw new RuntimeException("Customer can only accept his offer only");
+        }
+        if(!offer.getStatus().equals(OfferStatus.OwnerAccepted)){
+            throw new RuntimeException("Customer can only accept once owner is accepted");
+        }
+        offer.setStatus(OfferStatus.CustomerAccepted);
+        var property = offer.getProperty();
+        property.setStatus(PropertyStatus.Contingent);
+        propertyRepository.save(property);
+        offerRepository.save(offer);
+        return new GenericActivityResponse(true, "Offer Accepted", offer);
+    }
+    public GenericActivityResponse ownerCancelOffer(AcceptOfferRequest model) {
+        var offer = changeOfferStatus(model.getOfferId(), OfferStatus.cancelled);
+        return new GenericActivityResponse(true, "Offer Cancelled", offer);
+    }
+
+
 }

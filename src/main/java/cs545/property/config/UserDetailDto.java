@@ -83,6 +83,23 @@ public class UserDetailDto implements UserDetails {
 
 
     public boolean isAdmin() {
-        return roles.stream().filter(r -> r.getName().equals("Admin")).findFirst().isPresent();
+        return isInRole("Admin");
+    }
+    public boolean isOwner() {
+        return isInRole("Owner");
+    }   public boolean isCustomer() {
+        return isInRole("Customer");
+    }
+    public boolean isInRole(String role){
+        return roles.stream().filter(r -> r.getName().equals(role)).findFirst().isPresent();
+    }
+
+    @Override
+    public String toString() {
+        return "UserDetailDto{" +
+                "userId=" + userId +
+                ", userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

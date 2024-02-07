@@ -43,6 +43,15 @@ public class Offer {
 
     @ManyToOne
     private Property property;
+
+    @Override
+    public String toString() {
+        return "Offer{" +
+                "status=" + status +
+                ", amount=" + amount +
+                ", date=" + date +
+                '}';
+    }
 }
 
 

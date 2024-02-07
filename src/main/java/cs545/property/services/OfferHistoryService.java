@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class OfferHistoryService {
@@ -43,6 +44,10 @@ public class OfferHistoryService {
         domain.setOffer(offer.get());
         offerHistoryRepo.save(domain);
         return new OfferHistoryResponse(domain);
+    }
+
+    public List<OfferHistoryResponse> getHistoryByOffer(Long offerId){
+        return offerHistoryRepo.findByOfferId(offerId).stream().map(o->new OfferHistoryResponse(o)).toList();
     }
 
 

@@ -74,7 +74,7 @@ public class SecurityConfig {
                 .requestMatchers("/favourites").authenticated()
                 .requestMatchers("/favourites/**").authenticated()
                 .requestMatchers("/offers").authenticated()
-                .requestMatchers("/offers/user").authenticated()
+                .requestMatchers("/offers/**").authenticated()
 //                .requestMatchers("/properties/*/offers").authenticated()
                 .requestMatchers(HttpMethod.POST, "/properties").authenticated() //.permitAll()
                 .requestMatchers("/properties").permitAll()
