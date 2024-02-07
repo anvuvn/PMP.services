@@ -8,7 +8,6 @@ import cs545.property.domain.Offer;
 import cs545.property.domain.Property;
 import cs545.property.domain.Users;
 import cs545.property.dto.OfferDto;
-import cs545.property.dto.UserDto;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
@@ -43,9 +42,9 @@ public class OfferService {
     }
 
 
-    public List<OfferDto> findByPropertyId(long propertyId) {
+    public List<Offer> findByPropertyId(long propertyId) {
         Property property = propertyRepository.findById(propertyId).get();
-        return listMapper.map(property.getOffers(), OfferDto.class);
+        return listMapper.map(property.getOffers(), Offer.class);
     }
 
     public List<OfferDto> findCustomerOffersByPropertyId(Users user, long propertyId) {
@@ -59,7 +58,7 @@ public class OfferService {
     }
 
 
-    public GenericActivityResponse create(Users user,CreateOfferRequest offerRequest, long propertyId) {
+    public GenericActivityResponse create(CreateOfferRequest offerRequest, long propertyId) {
         Offer offer = modelMapper.map(offerRequest, Offer.class);
 
         Property property = propertyRepository.findById(propertyId).get();
@@ -74,7 +73,7 @@ public class OfferService {
 
         offer.setProperty(property);
         offer.setCustomer(new Customer() {{
-            setId(user.getId());
+            setId(offerRequest.getUserId());
         }});
 
         syncPropertyStatusOnCreate(property);
