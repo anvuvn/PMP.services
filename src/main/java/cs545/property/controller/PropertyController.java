@@ -5,6 +5,7 @@ import cs545.property.domain.Property;
 import cs545.property.dto.PropertyAddRequest;
 import cs545.property.dto.PropertyGridResponse;
 import cs545.property.dto.PropertyResponseDto;
+import cs545.property.dto.PropertySearchRequest;
 import cs545.property.services.PropertyService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,6 @@ public class PropertyController {
     }
 
     @PostMapping
-    @Transactional
     public PropertyResponseDto addProperty(@RequestBody PropertyAddRequest property) throws IllegalAccessException {
         var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
         var userId = user.getUserId();
@@ -87,6 +87,11 @@ public class PropertyController {
 
         return ResponseEntity.ok(propertyService.approveProperty(id));
     }
+    @PostMapping("/filters")
+    public ResponseEntity<?> searchProperties(@RequestBody PropertySearchRequest model)
+    {
 
+        return ResponseEntity.ok(propertyService.searchProperty(model));
+    }
 
 }

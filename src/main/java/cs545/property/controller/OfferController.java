@@ -1,9 +1,8 @@
 package cs545.property.controller;
 
-import cs545.property.config.JwtHelper;
-import cs545.property.config.UserDetailDto;
+
+import cs545.property.domain.Offer;
 import cs545.property.domain.Users;
-import cs545.property.dto.UserDto;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
@@ -12,8 +11,6 @@ import cs545.property.services.OfferService;
 import cs545.property.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,8 +47,7 @@ public class OfferController {
 
     @PostMapping("/properties/{propertyId}/offers")
     public GenericActivityResponse save(HttpServletRequest request, @RequestBody CreateOfferRequest offerRequest, @PathVariable long propertyId) {
-        Users user = userService.getLoggedInUser(request);
-        return offerService.create(user, offerRequest, propertyId);
+        return offerService.create(offerRequest, propertyId);
     }
 
     @PutMapping("/properties/{property_id}/offers/{id}")
@@ -61,7 +57,7 @@ public class OfferController {
     }
 
     @GetMapping("/properties/{propertyId}/offers")
-    public List<OfferDto> findPropertyOffers(@PathVariable long propertyId) {
+    public List<Offer> findPropertyOffers(@PathVariable long propertyId) {
         return offerService.findByPropertyId(propertyId);
     }
 }

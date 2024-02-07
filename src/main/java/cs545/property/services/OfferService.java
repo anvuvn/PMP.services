@@ -8,7 +8,6 @@ import cs545.property.domain.Offer;
 import cs545.property.domain.Property;
 import cs545.property.domain.Users;
 import cs545.property.dto.OfferDto;
-import cs545.property.dto.UserDto;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
@@ -43,9 +42,9 @@ public class OfferService {
     }
 
 
-    public List<OfferDto> findByPropertyId(long propertyId) {
+    public List<Offer> findByPropertyId(long propertyId) {
         Property property = propertyRepository.findById(propertyId).get();
-        return listMapper.map(property.getOffers(), OfferDto.class);
+        return listMapper.map(property.getOffers(), Offer.class);
     }
 
     public List<OfferDto> findCustomerOffersByPropertyId(Users user, long propertyId) {
@@ -59,7 +58,7 @@ public class OfferService {
     }
 
 
-    public GenericActivityResponse create(Users user,CreateOfferRequest offerRequest, long propertyId) {
+    public GenericActivityResponse create(CreateOfferRequest offerRequest, long propertyId) {
         Offer offer = modelMapper.map(offerRequest, Offer.class);
 
         Property property = propertyRepository.findById(propertyId).get();
@@ -74,7 +73,7 @@ public class OfferService {
 
         offer.setProperty(property);
         offer.setCustomer(new Customer() {{
-            setId(user.getId());
+            setId(offerRequest.getUserId());
         }});
 
         syncPropertyStatusOnCreate(property);
@@ -84,7 +83,7 @@ public class OfferService {
     }
 
     private void syncPropertyStatusOnCreate(Property property) {
-        property.setStatus(PropertyStatus.Waiting);
+        property.setStatus(PropertyStatus.Pending);
 
         propertyRepository.save(property);
     }
@@ -124,7 +123,7 @@ public class OfferService {
                     .stream()
                     .anyMatch(o -> o.getStatus() == OfferStatus.created);
 
-            property.setStatus(hasOtherActiveOffers ? PropertyStatus.Waiting : PropertyStatus.Available);
+            property.setStatus(hasOtherActiveOffers ? PropertyStatus.Pending : PropertyStatus.Available);
         } else if (offer.getStatus() == OfferStatus.contingent) {
             property.setStatus(PropertyStatus.Contingent);
         }
@@ -140,9 +139,9 @@ public class OfferService {
         boolean isCurrentUsersProperty = offer.getProperty().getOwner().getId() == user.getId();
         boolean isCurrentUsersOffer = offer.getProperty().getOwner().getId() != user.getId();
 
-        boolean isAllowed = (user.getRoles().contains("Owner") && isCurrentUsersProperty && allowedForOwner.contains(status) && offer.getProperty().getStatus() == PropertyStatus.Waiting)
+        boolean isAllowed = (user.getRoles().contains("Owner") && isCurrentUsersProperty && allowedForOwner.contains(status) && offer.getProperty().getStatus() == PropertyStatus.Pending)
                 ||
-                (user.getRoles().contains("Customer") && isCurrentUsersOffer && allowedForCustomer.contains(status) && offer.getStatus() != OfferStatus.contingent && offer.getProperty().getStatus() != PropertyStatus.Waiting);
+                (user.getRoles().contains("Customer") && isCurrentUsersOffer && allowedForCustomer.contains(status) && offer.getStatus() != OfferStatus.contingent && offer.getProperty().getStatus() != PropertyStatus.Pending);
 
         if (!isAllowed)
             throw new ErrorException("Cannot perform given status change");
