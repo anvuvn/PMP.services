@@ -1,18 +1,17 @@
 package cs545.property.services;
 
 
+import cs545.property.config.UserDetailDto;
 import cs545.property.constant.PropertyStatus;
 import cs545.property.domain.Address;
 import cs545.property.domain.Property;
-import cs545.property.dto.PropertyAddRequest;
-import cs545.property.dto.PropertyResponseDto;
-import cs545.property.dto.PropertySearchRequest;
-import cs545.property.dto.UserDto;
+import cs545.property.dto.*;
 import cs545.property.repository.PropertyRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.Predicate;
 import cs545.property.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +41,7 @@ public class PropertyService {
 
     @Transactional
     public Property getById(Long id) {
+
         var p = propertyRepo.getReferenceById(id);
 
         if (p == null)
@@ -122,5 +122,30 @@ public class PropertyService {
         query.where(criteria);
         var result = entityManager.createQuery(query).getResultList();
         return result.stream().map(p -> new PropertyResponseDto(p)).toList();
+    }
+
+    public Property updateProperty(Long id, PropertyUpdateRequest model)  {
+        try {
+            var property = propertyRepo.getReferenceById(id);
+            if(property == null) {
+                throw new Exception("Property does not exist");
+            }
+            var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if(user.getUserId() != model.getOwnerId())
+            {
+                throw new Exception("Only owner can update property");
+            }
+            property.setPropertyType(model.getPropertyType());
+            property.setAddress(new Address(model.getAddress()));
+            property.setPrice(model.getPrice());
+            property.setOwner(userRepo.getReferenceById(model.getOwnerId()));
+            //
+            var p = propertyRepo.save(property);
+            return p;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

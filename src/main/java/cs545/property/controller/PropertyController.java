@@ -2,10 +2,7 @@ package cs545.property.controller;
 
 import cs545.property.config.UserDetailDto;
 import cs545.property.domain.Property;
-import cs545.property.dto.PropertyAddRequest;
-import cs545.property.dto.PropertyGridResponse;
-import cs545.property.dto.PropertyResponseDto;
-import cs545.property.dto.PropertySearchRequest;
+import cs545.property.dto.*;
 import cs545.property.services.PropertyService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +47,15 @@ public class PropertyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Property> getPropertyById(@PathVariable Long id)
+    public ResponseEntity<PropertyGridResponse> getPropertyById(@PathVariable Long id)
     {
-        return new ResponseEntity(propertyService.getById(id), HttpStatus.OK);
+
+        return new ResponseEntity(  new PropertyGridResponse(propertyService.getById(id)), HttpStatus.OK);
     }
 
     @PostMapping
     public PropertyResponseDto addProperty(@RequestBody PropertyAddRequest property) throws IllegalAccessException {
+        //
         var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
         var userId = user.getUserId();
         property.setOwnerId(userId);
@@ -90,8 +89,14 @@ public class PropertyController {
     @PostMapping("/filters")
     public ResponseEntity<?> searchProperties(@RequestBody PropertySearchRequest model)
     {
-
         return ResponseEntity.ok(propertyService.searchProperty(model));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProperty(@PathVariable Long id, @RequestBody PropertyUpdateRequest property)
+    {
+        var prop = propertyService.updateProperty(id, property);
+        return ResponseEntity.ok(prop);
     }
 
 }
