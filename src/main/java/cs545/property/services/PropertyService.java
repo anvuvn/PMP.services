@@ -129,7 +129,7 @@ public class PropertyService {
         return result.stream().map(p -> new PropertyResponseDto(p)).toList();
     }
 
-    public Property updateProperty(Long id, PropertyUpdateRequest model)  {
+    public PropertyResponseDto updateProperty(Long id, PropertyUpdateRequest model)  {
         try {
             var property = propertyRepo.getReferenceById(id);
             if(property == null) {
@@ -149,7 +149,7 @@ public class PropertyService {
             property.setAddress(new Address(model.getAddress()));
             //
             var p = propertyRepo.save(property);
-            return p;
+            return new PropertyResponseDto(p);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
