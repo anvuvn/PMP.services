@@ -11,5 +11,5 @@ public class PropertyUpdateRequest {
     Double price;
     AddressDto address;
     Long ownerId;
-
+    Integer numberOfRoom;
 }
