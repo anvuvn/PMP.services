@@ -16,4 +16,6 @@ public class PropertyAddRequest {
     AddressDto address;
     Long ownerId;
 
+    Integer numberOfRoom;
+
 }

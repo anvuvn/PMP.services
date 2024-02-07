@@ -14,6 +14,7 @@ public class PropertyResponseDto {
     Long ownerId;
     String ownerName;
     PropertyStatus status;
+    Integer numberOfRoom;
 
     public PropertyResponseDto(Property p) {
         id = p.getId();
@@ -22,6 +23,7 @@ public class PropertyResponseDto {
         address = new AddressDto(p.getAddress());
         ownerId = p.getOwner().getId();
         ownerName = p.getOwner().getName();
+        numberOfRoom = p.getNumberOfRoom();
         status = p.getStatus();
     }
 }
