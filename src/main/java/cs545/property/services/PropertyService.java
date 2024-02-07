@@ -80,8 +80,12 @@ public class PropertyService {
     }
 
     public PropertyResponseDto approveProperty(Long id) {
+        return changePropertyStatus(id, PropertyStatus.Available);
+    }
+
+    public PropertyResponseDto changePropertyStatus(Long id, PropertyStatus status) {
         var p = propertyRepo.getReferenceById(id);
-        p.setStatus(PropertyStatus.Available);
+        p.setStatus(status);
         propertyRepo.save(p);
         return new PropertyResponseDto(p);
     }
@@ -105,7 +109,7 @@ public class PropertyService {
             predicates.add(p);
         }
         if (model.getLocation() != null && model.getLocation() != "") {
-            var locationParts = Arrays.stream(model.getLocation().split("[||]")).filter(x->!x.isEmpty()).toArray();
+            var locationParts = Arrays.stream(model.getLocation().split("[||]")).filter(x -> !x.isEmpty()).toArray();
             var state = locationParts[0].toString();
             var city = locationParts[1].toString();
             var p = builder.like(addressJoin.get("city"), city);
