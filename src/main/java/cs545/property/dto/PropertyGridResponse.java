@@ -16,6 +16,8 @@ public class PropertyGridResponse {
     String ownerName;
     PropertyStatus status;
 
+    Integer numberOfRoom;
+
     byte[] thumbs;
     public PropertyGridResponse(Property p) {
         id = p.getId();
@@ -25,6 +27,8 @@ public class PropertyGridResponse {
         ownerId = p.getOwner().getId();
         ownerName = p.getOwner().getName();
         status = p.getStatus();
+        numberOfRoom = p.getNumberOfRoom();
+        //
         var imps = p.getImages();
         if(imps != null && imps.size() > 0){
             thumbs =  ImageUtil.decompressImage(imps.get(0).getImageData());

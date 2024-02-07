@@ -5,7 +5,8 @@ public enum PropertyStatus {
     Available("Available"),
     Pending("Pending"),
     Contingent("Contingent"),
-    Sold("Sold");
+    Sold("Sold"),
+    Deleted("Deleted");
     private String type;
     PropertyStatus(String type) {
         this.type = type;

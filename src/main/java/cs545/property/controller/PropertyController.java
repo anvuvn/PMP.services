@@ -1,6 +1,7 @@
 package cs545.property.controller;
 
 import cs545.property.config.UserDetailDto;
+import cs545.property.constant.PropertyStatus;
 import cs545.property.domain.Property;
 import cs545.property.dto.*;
 import cs545.property.services.PropertyService;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/properties")
-@CrossOrigin(origins ="http://localhost:3000")
+@CrossOrigin(origins ="http://localhost:3000", methods = {RequestMethod.PUT,RequestMethod.GET,RequestMethod.POST, RequestMethod.DELETE})
 public class PropertyController {
 
 
@@ -27,17 +28,7 @@ public class PropertyController {
     @GetMapping
     public ResponseEntity<List<PropertyGridResponse>> getAllProperties()
     {
-////        var props = propertyService.getAll();
-////        var result = new ArrayList<PropertyGridResponse>();
-////
-////        props.forEach(p -> {
-////            var
-//
-//        });
-
-        return new
-                ResponseEntity<>(propertyService.getAll().stream().map(p->new PropertyGridResponse(p)).toList(), HttpStatus.OK);
-
+        return new ResponseEntity<>(propertyService.getAll().stream().map(p->new PropertyGridResponse(p)).toList(), HttpStatus.OK);
     }
 
     @GetMapping("/all")
@@ -49,8 +40,7 @@ public class PropertyController {
     @GetMapping("/{id}")
     public ResponseEntity<PropertyGridResponse> getPropertyById(@PathVariable Long id)
     {
-
-        return new ResponseEntity(  new PropertyGridResponse(propertyService.getById(id)), HttpStatus.OK);
+        return new ResponseEntity( new PropertyGridResponse(propertyService.getById(id)), HttpStatus.OK);
     }
 
     @PostMapping
@@ -97,6 +87,11 @@ public class PropertyController {
     {
         var prop = propertyService.updateProperty(id, property);
         return ResponseEntity.ok(prop);
+    }
+
+    @PutMapping("/{id}/status/{status}")
+    public ResponseEntity<?> changePropertyStatus(@PathVariable Long id, @PathVariable PropertyStatus status) {
+        return ResponseEntity.ok(propertyService.changePropertyStatus(id, status));
     }
 
 }

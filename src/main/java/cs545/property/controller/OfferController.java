@@ -4,6 +4,7 @@ package cs545.property.controller;
 import cs545.property.config.UserDetailDto;
 import cs545.property.domain.Offer;
 import cs545.property.domain.Users;
+import cs545.property.dto.AcceptOfferRequest;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
@@ -31,7 +32,7 @@ public class OfferController {
     private final CustomerRepo customerRepo;
 
     @GetMapping("/offers")
-    public List<OfferDto> findAll(){
+    public List<OfferDto> findAll() {
         return offerService.findAll();
     }
 
@@ -63,5 +64,35 @@ public class OfferController {
     @GetMapping("/properties/{propertyId}/offers")
     public List<Offer> findPropertyOffers(@PathVariable long propertyId) {
         return offerService.findByPropertyId(propertyId);
+    }
+
+    @PostMapping("/offers/customer/{offerId}/accept")
+    public GenericActivityResponse customerAcceptOffer(@PathVariable Long offerId, @RequestBody AcceptOfferRequest model) {
+        try {
+            return offerService.customerAcceptOffer(new AcceptOfferRequest(offerId));
+        } catch (RuntimeException ex) {
+            return new GenericActivityResponse(false, ex.getMessage());
+        }
+
+    }
+
+    @PostMapping("/offers/owner/{offerId}/accept")
+    public GenericActivityResponse ownerAcceptOffer(@PathVariable Long offerId, @RequestBody AcceptOfferRequest model) {
+        try {
+            return offerService.ownerAcceptOffer(new AcceptOfferRequest(offerId));
+        } catch (RuntimeException ex) {
+            return new GenericActivityResponse(false, ex.getMessage());
+        }
+
+    }
+
+    @PostMapping("/offers/owner/{offerId}/cancel")
+    public GenericActivityResponse ownerCancelOffer(@PathVariable Long offerId, @RequestBody AcceptOfferRequest model) {
+        try {
+            return offerService.ownerCancelOffer(new AcceptOfferRequest(offerId));
+        } catch (RuntimeException ex) {
+            return new GenericActivityResponse(false, ex.getMessage());
+        }
+
     }
 }

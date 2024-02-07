@@ -36,7 +36,7 @@ public class PropertyService {
 
     @Transactional
     public List<Property> getAll() {
-        return propertyRepo.findAll().stream().toList();
+        return propertyRepo.findAll().stream().filter(p -> !p.getStatus().equals(PropertyStatus.Deleted)).toList();
     }
 
     @Transactional
@@ -65,18 +65,19 @@ public class PropertyService {
         property.setPropertyType(model.getPropertyType());
         property.setAddress(new Address(model.getAddress()));
         property.setPrice(model.getPrice());
+        property.setNumberOfRoom(model.getNumberOfRoom());
         property.setOwner(userRepo.getReferenceById(model.getOwnerId()));
-        var p = propertyRepo.save(property);
 
+        var p = propertyRepo.save(property);
         if (p == null)
             return null;
+        //
         return p;
     }
 
-
     @Transactional
     public List<PropertyResponseDto> getPropertiesByOwnerId(Long ownerId) {
-        return propertyRepo.findByOwnerId(ownerId).stream().map(p -> new PropertyResponseDto(p)).toList();
+        return propertyRepo.findByOwnerId(ownerId).stream().filter(p -> !p.getStatus().equals(PropertyStatus.Deleted)).map(p -> new PropertyResponseDto(p)).toList();
     }
 
     public PropertyResponseDto approveProperty(Long id) {
@@ -128,7 +129,7 @@ public class PropertyService {
         return result.stream().map(p -> new PropertyResponseDto(p)).toList();
     }
 
-    public Property updateProperty(Long id, PropertyUpdateRequest model)  {
+    public PropertyResponseDto updateProperty(Long id, PropertyUpdateRequest model)  {
         try {
             var property = propertyRepo.getReferenceById(id);
             if(property == null) {
@@ -139,13 +140,16 @@ public class PropertyService {
             {
                 throw new Exception("Only owner can update property");
             }
-            property.setPropertyType(model.getPropertyType());
-            property.setAddress(new Address(model.getAddress()));
-            property.setPrice(model.getPrice());
             property.setOwner(userRepo.getReferenceById(model.getOwnerId()));
             //
+            property.setPropertyType(model.getPropertyType());
+            property.setPrice(model.getPrice());
+            property.setNumberOfRoom(model.getNumberOfRoom());
+            //
+            property.setAddress(new Address(model.getAddress()));
+            //
             var p = propertyRepo.save(property);
-            return p;
+            return new PropertyResponseDto(p);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
