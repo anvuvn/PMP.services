@@ -3,7 +3,7 @@ package cs545.property.domain.enums;
 public enum PropertyType {
     House("House"),
     Condo("Condo"),
-    Townhome("Town home"),
+    Townhome("Townhome"),
     MultiFamily("Multi family"),
     Mobile("Mobile"),
     Farm("Farm"),

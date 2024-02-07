@@ -25,5 +25,4 @@ public class OfferDto {
     private Date date;
     private String message;
     private OfferStatus status;
-
 }

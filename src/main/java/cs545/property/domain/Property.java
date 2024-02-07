@@ -5,7 +5,6 @@ import cs545.property.constant.PropertyTransactionStatus;
 import cs545.property.domain.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
 
 import java.util.List;
 
@@ -28,16 +27,13 @@ public class Property {
     @ManyToOne
     Users owner;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name="property_id")
-    List<ImageData> images;
+    @OneToMany
+    List<PropertyImage> images;
 
     @Enumerated(EnumType.STRING)
     PropertyStatus status = PropertyStatus.Waiting;
 
     @OneToMany(mappedBy = "property")
     private List<Offer> offers;
-
-    private Integer numberOfRoom;
 
 }
