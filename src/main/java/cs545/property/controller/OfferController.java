@@ -1,16 +1,19 @@
 package cs545.property.controller;
 
 
+import cs545.property.config.UserDetailDto;
 import cs545.property.domain.Offer;
 import cs545.property.domain.Users;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
 import cs545.property.dto.OfferDto;
+import cs545.property.repository.CustomerRepo;
 import cs545.property.services.OfferService;
 import cs545.property.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +28,7 @@ public class OfferController {
 
     private final OfferService offerService;
     private final UserService userService;
+    private final CustomerRepo customerRepo;
 
     @GetMapping("/offers")
     public List<OfferDto> findAll(){
@@ -34,9 +38,8 @@ public class OfferController {
     @GetMapping("/offers/user")
     public List<OfferDto> findAllForUser(HttpServletRequest request) {
 
-        Users user = userService.getLoggedInUser(request);
-
-        var userId = user.getId();
+        var user = (UserDetailDto)SecurityContextHolder.getContext().getAuthentication().getDetails();
+        var userId = user.getUserId();
 
         if (userId != null) {
             return offerService.findByCustomerId(userId);
@@ -46,13 +49,14 @@ public class OfferController {
     }
 
     @PostMapping("/properties/{propertyId}/offers")
-    public GenericActivityResponse save(HttpServletRequest request, @RequestBody CreateOfferRequest offerRequest, @PathVariable long propertyId) {
-        return offerService.create(offerRequest, propertyId);
+    public GenericActivityResponse save(@RequestBody CreateOfferRequest offerRequest, @PathVariable("propertyId") long propertyId) {
+        return offerService.save(offerRequest, propertyId);
     }
 
     @PutMapping("/properties/{property_id}/offers/{id}")
-    public GenericActivityResponse changeStatus(HttpServletRequest req, @RequestBody ChangeOfferStatusRequest request, @PathVariable int id) {
-        Users user = userService.getLoggedInUser(req);
+    public GenericActivityResponse changeStatus(@RequestBody ChangeOfferStatusRequest request, @PathVariable int id) {
+        var user = (Users) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        var userId = user.getId();
         return offerService.changeStatus(user, id, request);
     }
 

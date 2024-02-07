@@ -12,25 +12,29 @@ import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
 import cs545.property.exceptions.ErrorException;
+import cs545.property.repository.CustomerRepo;
 import cs545.property.repository.OfferRepo;
 import cs545.property.repository.PropertyRepo;
+import cs545.property.repository.UserRepository;
 import cs545.property.util.ListMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
 public class OfferService {
     private final PropertyRepo propertyRepository;
+    private final CustomerRepo customerRepository;
     private final OfferRepo offerRepository;
     private final ListMapper listMapper;
-    private final ModelMapper modelMapper;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
 
     public List<OfferDto> findByCustomerId(long id) {
@@ -48,7 +52,6 @@ public class OfferService {
     }
 
     public List<OfferDto> findCustomerOffersByPropertyId(Users user, long propertyId) {
-
         return listMapper.map(offerRepository.findByCustomerIdAndPropertyId(user.getId(), propertyId), OfferDto.class);
     }
 
@@ -58,10 +61,14 @@ public class OfferService {
     }
 
 
-    public GenericActivityResponse create(CreateOfferRequest offerRequest, long propertyId) {
-        Offer offer = modelMapper.map(offerRequest, Offer.class);
+    public GenericActivityResponse save(CreateOfferRequest offerRequest, long propertyId) {
+        Offer offer = new Offer();
+        offer.setDate(new Date());
+        offer.setAmount(offerRequest.getAmount());
+        offer.setMessage(offerRequest.getMessage());
 
-        Property property = propertyRepository.findById(propertyId).get();
+        Property property = propertyRepository.findById(offerRequest.getPropertyId()).orElse(null);
+        Users user = userRepository.findById(offerRequest.getCustomerId()).orElse(null);
 
         try {
             validateOfferCreate(property);
@@ -72,20 +79,12 @@ public class OfferService {
         offer.setStatus(OfferStatus.created);
 
         offer.setProperty(property);
-        offer.setCustomer(new Customer() {{
-            setId(offerRequest.getUserId());
-        }});
+        offer.setCustomer(user);
 
-        syncPropertyStatusOnCreate(property);
+        property.setStatus(PropertyStatus.Pending);
 
         offerRepository.save(offer);
         return new GenericActivityResponse(true, "Offer created.");
-    }
-
-    private void syncPropertyStatusOnCreate(Property property) {
-        property.setStatus(PropertyStatus.Pending);
-
-        propertyRepository.save(property);
     }
 
     private void validateOfferCreate(Property property) {

@@ -1,5 +1,5 @@
 package cs545.property.constant;
 
 public enum OfferStatus{
-    created,pending,contingent,cancelled,rejected
+    created,pending,contingent,completed,rejected,cancelled
 }

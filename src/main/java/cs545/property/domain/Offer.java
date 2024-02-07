@@ -35,7 +35,7 @@ public class Offer {
     private BigDecimal amount;
 
     @OneToOne
-    private Customer customer;
+    private Users customer;
 
     @Column(name = "date", nullable = false, updatable = false)
     @CreationTimestamp
