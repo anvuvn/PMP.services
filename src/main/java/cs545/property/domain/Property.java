@@ -38,4 +38,6 @@ public class Property {
     @OneToMany(mappedBy = "property")
     private List<Offer> offers;
 
+    private Integer numberOfRoom;
+
 }
