@@ -20,7 +20,7 @@ import java.util.Date;
 @Filter(name = "deletedOfferFilter", condition = "deleted = :isDeleted")
 public class Offer {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private long id;
 
     @NonNull
@@ -34,8 +34,8 @@ public class Offer {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @OneToOne
-    private Customer customer;
+    @ManyToOne
+    private Users customer;
 
     @Column(name = "date", nullable = false, updatable = false)
     @CreationTimestamp

@@ -1,10 +1,10 @@
 package cs545.property.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import cs545.property.constant.OfferStatus;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -15,5 +15,18 @@ public class OfferHistory {
 
     @ManyToOne
     Offer offer;
+
+    @Enumerated(EnumType.STRING)
+    OfferStatus status;
+
+    LocalDateTime createdDate;
+
+    LocalDateTime updatedDate;
+//
+//    @ManyToOne
+//    Users modifyUser;
+
+    @ManyToOne
+    Users createdUser;
 
 }
