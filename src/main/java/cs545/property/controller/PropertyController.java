@@ -27,17 +27,7 @@ public class PropertyController {
     @GetMapping
     public ResponseEntity<List<PropertyGridResponse>> getAllProperties()
     {
-////        var props = propertyService.getAll();
-////        var result = new ArrayList<PropertyGridResponse>();
-////
-////        props.forEach(p -> {
-////            var
-//
-//        });
-
-        return new
-                ResponseEntity<>(propertyService.getAll().stream().map(p->new PropertyGridResponse(p)).toList(), HttpStatus.OK);
-
+        return new ResponseEntity<>(propertyService.getAll().stream().map(p->new PropertyGridResponse(p)).toList(), HttpStatus.OK);
     }
 
     @GetMapping("/all")
@@ -49,8 +39,7 @@ public class PropertyController {
     @GetMapping("/{id}")
     public ResponseEntity<PropertyGridResponse> getPropertyById(@PathVariable Long id)
     {
-
-        return new ResponseEntity(  new PropertyGridResponse(propertyService.getById(id)), HttpStatus.OK);
+        return new ResponseEntity( new PropertyGridResponse(propertyService.getById(id)), HttpStatus.OK);
     }
 
     @PostMapping
