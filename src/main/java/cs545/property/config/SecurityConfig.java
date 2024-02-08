@@ -79,8 +79,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/properties").authenticated() //.permitAll()
                 .requestMatchers("/properties").permitAll()
                 .requestMatchers("/properties/**").permitAll()
-                .requestMatchers("/images").authenticated()
-                .requestMatchers("/images/**").authenticated()
+
+                .requestMatchers(HttpMethod.POST, "/images").authenticated()
+                .requestMatchers("/images").permitAll()
+                .requestMatchers("/images/**").permitAll()
                 .requestMatchers("/messages").authenticated()
                 .requestMatchers("/messages/**").authenticated()
                 .requestMatchers("/admin/**").hasAnyAuthority("Admin")
