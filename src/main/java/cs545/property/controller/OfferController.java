@@ -51,7 +51,7 @@ public class OfferController {
 
     @PostMapping("/properties/{propertyId}/offers")
     public GenericActivityResponse save(@RequestBody CreateOfferRequest offerRequest, @PathVariable("propertyId") long propertyId) {
-        return offerService.save(offerRequest, propertyId);
+        return offerService.create(offerRequest, propertyId);
     }
 
     @PutMapping("/properties/{property_id}/offers/{id}")
