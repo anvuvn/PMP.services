@@ -1,9 +1,12 @@
 package cs545.property.controller;
 
+import cs545.property.dto.OfferHistoryResponse;
 import cs545.property.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -25,5 +28,10 @@ public class AdminController {
     public  ResponseEntity<?> approveOwner(@PathVariable Long id){
 
         return  ResponseEntity.ok(service.approveOwner(id));
+    }
+
+    @GetMapping("/offers/history")
+    public List<OfferHistoryResponse> history(){
+        return service.history();
     }
 }
