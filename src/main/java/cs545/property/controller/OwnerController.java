@@ -1,7 +1,11 @@
 package cs545.property.controller;
 
+import cs545.property.constant.OfferStatus;
 import cs545.property.domain.Property;
+import cs545.property.dto.AcceptOfferRequest;
 import cs545.property.dto.CustomerOfferListDto;
+import cs545.property.dto.response.GenericActivityResponse;
+import cs545.property.services.OfferService;
 import cs545.property.services.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +22,25 @@ public class OwnerController {
     @Autowired
     OwnerService ownerService;
 
-    @GetMapping("/{id}")
-    public List<CustomerOfferListDto> getAllCustomerOffers(@PathVariable("id") long id)
-    {
-        System.out.println("Testing");
-        //return ownerService.getAllCustomerOffers(id);
-        return  ownerService.getCustomerOffersByProperty(id);
+    @Autowired
+    OfferService offerService;
+//    @GetMapping("/{propertyId}")
+//    public List<CustomerOfferListDto> getAllPropertyOffers(@PathVariable("propertyId") long propertyId)
+//    {
+//        System.out.println("Testing");
+//        //return ownerService.getAllCustomerOffers(id);
+//        return  offerService.findCustomerOffersByPropertyId(propertyId);
+//    }
+
+    @GetMapping("/properties/{propertyId}/offers")
+    public List<CustomerOfferListDto> ownerlistOfferForPropertyList(@PathVariable long propertyId) {
+        return offerService.ownerGetPropertyOffers(propertyId);
     }
 
+    @GetMapping("/offers/status/{status}")
+    public  List<CustomerOfferListDto> getMyOfferByStatus(@PathVariable OfferStatus status) {
+
+            return offerService.ownerGetMyOfferByStatus(status);
+
+    }
 }

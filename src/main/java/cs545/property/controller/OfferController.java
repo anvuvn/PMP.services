@@ -5,6 +5,7 @@ import cs545.property.config.UserDetailDto;
 import cs545.property.domain.Offer;
 import cs545.property.domain.Users;
 import cs545.property.dto.AcceptOfferRequest;
+import cs545.property.dto.CustomerOfferListDto;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
@@ -77,6 +78,8 @@ public class OfferController {
         return offerService.findByPropertyId(propertyId);
     }
 
+
+
     @PostMapping("/offers/customer/{offerId}/accept")
     public GenericActivityResponse customerAcceptOffer(@PathVariable Long offerId, @RequestBody AcceptOfferRequest model) {
         try {
@@ -106,4 +109,7 @@ public class OfferController {
         }
 
     }
+
+
+
 }

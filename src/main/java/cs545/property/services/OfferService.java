@@ -9,6 +9,7 @@ import cs545.property.domain.Owner;
 import cs545.property.domain.Property;
 import cs545.property.domain.Users;
 import cs545.property.dto.AcceptOfferRequest;
+import cs545.property.dto.CustomerOfferListDto;
 import cs545.property.dto.OfferDto;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
@@ -211,5 +212,15 @@ public class OfferService {
         offer.setStatus(OfferStatus.cancelled);
         offerRepository.save(offer);
         return new OfferDto(offer);
+    }
+
+    public List<CustomerOfferListDto> ownerGetPropertyOffers(Long propertyId){
+        return offerRepository.findByPropertyId(propertyId).stream().map(o->new CustomerOfferListDto(o)).toList();
+    }
+
+    public List<CustomerOfferListDto> ownerGetMyOfferByStatus(OfferStatus status){
+        var user = (UserDetailDto)SecurityContextHolder.getContext().getAuthentication().getDetails();
+        var userId = user.getUserId();
+        return offerRepository.findByPropertyOwnerIdAndStatus(userId, status).stream().map(o->new CustomerOfferListDto(o)).toList();
     }
 }

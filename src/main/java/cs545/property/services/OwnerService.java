@@ -18,13 +18,14 @@ public class OwnerService {
     @Autowired
     OwnerRepo ownerRepo;
 
+
     @Autowired
     ListMapper listMapper;
 
-    public List<CustomerOfferListDto> getCustomerOffersByProperty(long id){
-        return  listMapper.map(ownerRepo.getCustomerOffersByProperty(id),CustomerOfferListDto.class);
-
-    }
+//    public List<CustomerOfferListDto> getCustomerOffersByProperty(long id){
+//        return  listMapper.map(ownerRepo.getCustomerOffersByProperty(id),CustomerOfferListDto.class);
+//
+//    }
 
     //offer accept
 
