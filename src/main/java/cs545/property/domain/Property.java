@@ -1,11 +1,9 @@
 package cs545.property.domain;
 
 import cs545.property.constant.PropertyStatus;
-import cs545.property.constant.PropertyTransactionStatus;
-import cs545.property.domain.enums.PropertyType;
+import cs545.property.constant.PropertyType;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
 
 import java.util.List;
 

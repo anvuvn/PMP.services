@@ -1,4 +1,4 @@
-package cs545.property.domain.enums;
+package cs545.property.constant;
 
 public enum PropertyType {
     House("House"),
