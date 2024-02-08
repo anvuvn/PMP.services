@@ -68,13 +68,18 @@ public class OfferService {
 
 
     public GenericActivityResponse create(CreateOfferRequest offerRequest, long propertyId) {
+
+        var existingOffers = offerRepository.findByCustomerIdAndPropertyId(offerRequest.getUserId(), propertyId);
+        if(existingOffers!= null && existingOffers.size()>0){
+            return new GenericActivityResponse(false, "Offer is existing");
+        }
         Offer offer = new Offer();
         offer.setAmount(offerRequest.getAmount());
         offer.setMessage(offerRequest.getMessage());
         offer.setDate(new Date());
 
-
         var customer = userRepository.getReferenceById(offerRequest.getUserId());
+
         var property = propertyRepository.findById(propertyId).get();
 
         try {

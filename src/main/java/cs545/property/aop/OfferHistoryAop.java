@@ -22,6 +22,8 @@ public class OfferHistoryAop {
 
     public void createNewRecord(GenericActivityResponse returnValue){
         var offer = (Offer) returnValue.getData();
+        if(offer == null)
+            return ;
 //        var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
 //        var userId = user.getUserId();
         var request = new OfferHistoryCreateRequest();
