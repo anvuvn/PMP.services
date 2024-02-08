@@ -67,6 +67,7 @@ public class PropertyService {
         property.setPrice(model.getPrice());
         property.setNumberOfRoom(model.getNumberOfRoom());
         property.setOwner(userRepo.getReferenceById(model.getOwnerId()));
+        property.setStatus(PropertyStatus.Waiting);
 
         var p = propertyRepo.save(property);
         if (p == null)
@@ -129,15 +130,14 @@ public class PropertyService {
         return result.stream().map(p -> new PropertyResponseDto(p)).toList();
     }
 
-    public PropertyResponseDto updateProperty(Long id, PropertyUpdateRequest model)  {
+    public PropertyResponseDto updateProperty(Long id, PropertyUpdateRequest model) {
         try {
             var property = propertyRepo.getReferenceById(id);
-            if(property == null) {
+            if (property == null) {
                 throw new Exception("Property does not exist");
             }
             var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            if(!user.getUserId().equals(model.getOwnerId()))
-            {
+            if (!user.getUserId().equals(model.getOwnerId())) {
                 throw new Exception("Only owner can update property");
             }
             property.setOwner(userRepo.getReferenceById(model.getOwnerId()));
@@ -150,8 +150,7 @@ public class PropertyService {
             //
             var p = propertyRepo.save(property);
             return new PropertyResponseDto(p);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
