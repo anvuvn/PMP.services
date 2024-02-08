@@ -136,7 +136,7 @@ public class PropertyService {
                 throw new Exception("Property does not exist");
             }
             var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            if(user.getUserId() != model.getOwnerId())
+            if(!user.getUserId().equals(model.getOwnerId()))
             {
                 throw new Exception("Only owner can update property");
             }
