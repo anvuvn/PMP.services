@@ -92,7 +92,7 @@ public class PropertyService {
         return new PropertyResponseDto(p);
     }
 
-    public List<PropertyResponseDto> searchProperty(PropertySearchRequest model) {
+    public List<PropertyGridResponse> searchProperty(PropertySearchRequest model) {
         var builder = entityManager.getCriteriaBuilder();
         var query = builder.createQuery(Property.class);
         List<Predicate> predicates = new ArrayList<Predicate>();
@@ -127,7 +127,7 @@ public class PropertyService {
         var criteria = builder.and(predicates.toArray(new Predicate[0]));
         query.where(criteria);
         var result = entityManager.createQuery(query).getResultList();
-        return result.stream().map(p -> new PropertyResponseDto(p)).toList();
+        return result.stream().map(p -> new PropertyGridResponse(p)).toList();
     }
 
     public PropertyResponseDto updateProperty(Long id, PropertyUpdateRequest model) {
