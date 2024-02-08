@@ -28,15 +28,15 @@ public class PropertyController {
     @GetMapping
     public ResponseEntity<List<PropertyGridResponse>> getAllProperties()
     {
-        var result = new ArrayList<PropertyGridResponse>();
-        var props = propertyService.getAll();
-        for (int i = 0; i <props.size(); i++) {
-            var prop = props.get(0);
-            result.add(new PropertyGridResponse(prop));
-        }
-        return new ResponseEntity<>(result, HttpStatus.OK);
+//        var result = new ArrayList<PropertyGridResponse>();
+//        var props = propertyService.getAll();
+//        for (int i = 0; i <props.size(); i++) {
+//            var prop = props.get(i);
+//            result.add(new PropertyGridResponse(prop));
+//        }
+//        return new ResponseEntity<>(result, HttpStatus.OK);
 
-//        return new ResponseEntity<>(propertyService.getAll().stream().map(p->new PropertyGridResponse(p)).toList(), HttpStatus.OK);
+        return new ResponseEntity<>(propertyService.getAll().stream().map(p->new PropertyGridResponse(p)).toList(), HttpStatus.OK);
     }
 
     @GetMapping("/all")
