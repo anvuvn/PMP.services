@@ -126,7 +126,7 @@ public class PropertyService {
             var p = builder.equal(root.get("numberOfRoom"), model.getNumberOfRoom());
             predicates.add(p);
         }
-        predicates.add(root.get("status").in(PropertyStatus.Deleted, PropertyStatus.Waiting));
+        predicates.add(builder.not(root.get("status").in(PropertyStatus.Deleted, PropertyStatus.Waiting)));
         var criteria = builder.and(predicates.toArray(new Predicate[0]));
         query.where(criteria);
         var result = entityManager.createQuery(query).getResultList();
