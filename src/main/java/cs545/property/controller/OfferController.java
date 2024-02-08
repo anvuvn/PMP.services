@@ -14,6 +14,7 @@ import cs545.property.services.OfferService;
 import cs545.property.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,16 @@ public class OfferController {
     @PostMapping("/properties/{propertyId}/offers")
     public GenericActivityResponse save(@RequestBody CreateOfferRequest offerRequest, @PathVariable("propertyId") long propertyId) {
         return offerService.create(offerRequest, propertyId);
+    }
+
+    @PostMapping("/offers/{id}/accept")
+    public ResponseEntity<?> acceptOffer(@PathVariable("id") Long id){
+        return  ResponseEntity.ok(offerService.acceptOffer(id));
+    }
+
+    @PostMapping("/offers/{id}/cancel")
+    public ResponseEntity<?> cancelOffer(@PathVariable("id") Long id){
+        return  ResponseEntity.ok(offerService.cancelOffer(id));
     }
 
     @PutMapping("/properties/{property_id}/offers/{id}")

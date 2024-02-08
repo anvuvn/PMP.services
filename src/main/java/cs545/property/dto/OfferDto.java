@@ -1,7 +1,10 @@
 package cs545.property.dto;
 
 import cs545.property.constant.OfferStatus;
+import cs545.property.constant.PropertyStatus;
 import cs545.property.constant.PropertyTransactionStatus;
+import cs545.property.domain.Offer;
+import cs545.property.domain.Users;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,16 +17,28 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OfferDto {
-    private int id;
-    private int propertyId;
+    private Long id;
+    private Long propertyId;
 
     private String propertyName;
-    private PropertyTransactionStatus propertyStatus;
+    private PropertyStatus propertyStatus;
     private String propertyImage;
-    private BigDecimal propertyPrice;
+    private Double propertyPrice;
     private BigDecimal amount;
     private Date date;
     private String message;
     private OfferStatus status;
+
+    public OfferDto(Offer offer){
+        id = offer.getId();
+        propertyId = offer.getProperty().getId();
+        propertyName = null;
+        propertyStatus = offer.getProperty().getStatus();
+        propertyImage = null;
+        propertyPrice = offer.getProperty().getPrice();
+        date = offer.getDate();
+        message = offer.getMessage();
+        status = offer.getStatus();
+    }
 
 }

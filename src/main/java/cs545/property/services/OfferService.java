@@ -199,4 +199,17 @@ public class OfferService {
     }
 
 
+    public OfferDto acceptOffer(Long id) {
+        var offer = offerRepository.getReferenceById(id);
+        offer.setStatus(OfferStatus.contingent);
+        offerRepository.save(offer);
+        return new OfferDto(offer);
+    }
+
+    public OfferDto cancelOffer(Long id) {
+        var offer = offerRepository.getReferenceById(id);
+        offer.setStatus(OfferStatus.cancelled);
+        offerRepository.save(offer);
+        return new OfferDto(offer);
+    }
 }
