@@ -2,29 +2,22 @@ package cs545.property.controller;
 
 import cs545.property.config.UserDetailDto;
 import cs545.property.domain.Property;
-import cs545.property.domain.PropertyImage;
-import cs545.property.dto.PropertyAddRequest;
-import cs545.property.dto.PropertyImageResponse;
-import cs545.property.dto.PropertyResponseDto;
-import cs545.property.services.FileUploadService;
+import cs545.property.dto.*;
 import cs545.property.services.PropertyService;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "properties")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5175"})
+@RequestMapping(value = "/properties")
+@CrossOrigin(origins ="http://localhost:3000")
 public class PropertyController {
 
 
@@ -32,21 +25,30 @@ public class PropertyController {
     private PropertyService propertyService;
 
     @GetMapping
-    public List<Property> getAllProperties()
+    public ResponseEntity<List<PropertyGridResponse>> getAllProperties()
     {
-        return propertyService.getAll();
+        return new ResponseEntity<>(propertyService.getAll().stream().map(p->new PropertyGridResponse(p)).toList(), HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Property>> getAll()
+    {
+        return new ResponseEntity<>(propertyService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Property getPropertyById(@RequestParam Long id)
+    public ResponseEntity<PropertyGridResponse> getPropertyById(@PathVariable Long id)
     {
-        return propertyService.getById(id);
+        return new ResponseEntity( new PropertyGridResponse(propertyService.getById(id)), HttpStatus.OK);
     }
 
     @PostMapping
-    public PropertyResponseDto addProperty(@RequestBody PropertyAddRequest property)
-    {
-
+    public PropertyResponseDto addProperty(@RequestBody PropertyAddRequest property) throws IllegalAccessException {
+        //
+        var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        var userId = user.getUserId();
+        property.setOwnerId(userId);
+        //
         return  new PropertyResponseDto(propertyService.AddProperty(property));
     }
     @GetMapping("/status/{status}")
@@ -73,6 +75,17 @@ public class PropertyController {
 
         return ResponseEntity.ok(propertyService.approveProperty(id));
     }
+    @PostMapping("/filters")
+    public ResponseEntity<?> searchProperties(@RequestBody PropertySearchRequest model)
+    {
+        return ResponseEntity.ok(propertyService.searchProperty(model));
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProperty(@PathVariable Long id, @RequestBody PropertyUpdateRequest property)
+    {
+        var prop = propertyService.updateProperty(id, property);
+        return ResponseEntity.ok(prop);
+    }
 
 }

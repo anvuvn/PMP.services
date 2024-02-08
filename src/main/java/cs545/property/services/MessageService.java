@@ -21,7 +21,7 @@ public class MessageService {
     UserRepository userRepository;
 
     public List<MessageDto> getMessageByReceiver(Long receiverId) {
-        return messageRepo.findByReceiverId(receiverId).stream().map(m -> new MessageDto(m)).toList();
+        return messageRepo.findByReceiverIdOrderByCreatedDateDesc(receiverId).stream().map(m -> new MessageDto(m)).toList();
     }
 
     public MessageDto sendMessage(SendMessageRequestModel model) {

@@ -1,23 +1,28 @@
 package cs545.property.services;
 
+import cs545.property.config.UserDetailDto;
 import cs545.property.constant.OfferStatus;
+import cs545.property.constant.PropertyStatus;
 import cs545.property.constant.PropertyTransactionStatus;
-import cs545.property.domain.Customer;
 import cs545.property.domain.Offer;
+import cs545.property.domain.Owner;
 import cs545.property.domain.Property;
 import cs545.property.domain.Users;
+import cs545.property.dto.AcceptOfferRequest;
 import cs545.property.dto.OfferDto;
-import cs545.property.dto.UserDto;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
 import cs545.property.exceptions.ErrorException;
 import cs545.property.repository.OfferRepo;
 import cs545.property.repository.PropertyRepo;
+import cs545.property.repository.UserRepository;
 import cs545.property.util.ListMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,12 +30,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class OfferService {
     private final PropertyRepo propertyRepository;
     private final OfferRepo offerRepository;
     private final ListMapper listMapper;
     private final ModelMapper modelMapper;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
 
     public List<OfferDto> findByCustomerId(long id) {
@@ -42,9 +48,9 @@ public class OfferService {
     }
 
 
-    public List<OfferDto> findByPropertyId(long propertyId) {
+    public List<Offer> findByPropertyId(long propertyId) {
         Property property = propertyRepository.findById(propertyId).get();
-        return listMapper.map(property.getOffers(), OfferDto.class);
+        return listMapper.map(property.getOffers(), Offer.class);
     }
 
     public List<OfferDto> findCustomerOffersByPropertyId(Users user, long propertyId) {
@@ -58,9 +64,9 @@ public class OfferService {
     }
 
 
-    public GenericActivityResponse create(Users user,CreateOfferRequest offerRequest, long propertyId) {
+    public GenericActivityResponse create(CreateOfferRequest offerRequest, long propertyId) {
         Offer offer = modelMapper.map(offerRequest, Offer.class);
-
+        var customer = userRepository.getReferenceById(offerRequest.getUserId());
         Property property = propertyRepository.findById(propertyId).get();
 
         try {
@@ -72,26 +78,24 @@ public class OfferService {
         offer.setStatus(OfferStatus.created);
 
         offer.setProperty(property);
-        offer.setCustomer(new Customer() {{
-            setId(user.getId());
-        }});
+        offer.setCustomer(customer);
 
         syncPropertyStatusOnCreate(property);
 
         offerRepository.save(offer);
-        return new GenericActivityResponse(true, "Offer created.");
+        return new GenericActivityResponse(true, "Offer created.", offer);
     }
 
     private void syncPropertyStatusOnCreate(Property property) {
-        property.setPropertyStatus(PropertyTransactionStatus.Pending);
-
-        propertyRepository.save(property);
+//        property.setStatus(PropertyStatus.Pending);
+//
+//        propertyRepository.save(property);
     }
 
     private void validateOfferCreate(Property property) {
         List<PropertyTransactionStatus> allowedStatus = Arrays.asList(PropertyTransactionStatus.Available, PropertyTransactionStatus.Pending);
 
-        if (property == null || !allowedStatus.contains(property.getPropertyStatus()))
+        if (property == null || !allowedStatus.contains(property.getStatus()))
             return;
         //throw new ErrorException("Not Allowed");
     }
@@ -111,7 +115,7 @@ public class OfferService {
         syncPropertyStatusOnEdit(offer);
         offerRepository.save(offer);
 
-        return new GenericActivityResponse(true, "Status updated");
+        return new GenericActivityResponse(true, "Status updated", offer);
     }
 
     private void syncPropertyStatusOnEdit(Offer offer) {
@@ -123,9 +127,9 @@ public class OfferService {
                     .stream()
                     .anyMatch(o -> o.getStatus() == OfferStatus.created);
 
-            property.setPropertyStatus(hasOtherActiveOffers ? PropertyTransactionStatus.Pending : PropertyTransactionStatus.Available);
+            property.setStatus(hasOtherActiveOffers ? PropertyStatus.Pending : PropertyStatus.Available);
         } else if (offer.getStatus() == OfferStatus.contingent) {
-            property.setPropertyStatus(PropertyTransactionStatus.Contingent);
+            property.setStatus(PropertyStatus.Contingent);
         }
 
         propertyRepository.save(property);
@@ -133,17 +137,60 @@ public class OfferService {
 
     private void validateStatusChange(Users user, Offer offer, OfferStatus status) {
 
-        List<OfferStatus> allowedForOwner =Arrays.asList(OfferStatus.contingent, OfferStatus.rejected);
-        List<OfferStatus> allowedForCustomer =Arrays.asList(OfferStatus.cancelled);
+        List<OfferStatus> allowedForOwner = Arrays.asList(OfferStatus.contingent, OfferStatus.rejected);
+        List<OfferStatus> allowedForCustomer = Arrays.asList(OfferStatus.cancelled);
 
         boolean isCurrentUsersProperty = offer.getProperty().getOwner().getId() == user.getId();
         boolean isCurrentUsersOffer = offer.getProperty().getOwner().getId() != user.getId();
 
-        boolean isAllowed = (user.getRoles().contains("Owner") && isCurrentUsersProperty && allowedForOwner.contains(status) && offer.getProperty().getPropertyStatus() == PropertyTransactionStatus.Pending)
+        boolean isAllowed = (user.getRoles().contains("Owner") && isCurrentUsersProperty && allowedForOwner.contains(status) && offer.getProperty().getStatus() == PropertyStatus.Pending)
                 ||
-                (user.getRoles().contains("Customer") && isCurrentUsersOffer && allowedForCustomer.contains(status) && offer.getStatus() != OfferStatus.contingent && offer.getProperty().getPropertyStatus() != PropertyTransactionStatus.Pending);
+                (user.getRoles().contains("Customer") && isCurrentUsersOffer && allowedForCustomer.contains(status) && offer.getStatus() != OfferStatus.contingent && offer.getProperty().getStatus() != PropertyStatus.Pending);
 
         if (!isAllowed)
             throw new ErrorException("Cannot perform given status change");
     }
+
+    private Offer changeOfferStatus(Long offerId, OfferStatus status) {
+        var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        if (!user.isOwner()) {
+            throw new RuntimeException("Permission dennied! - Only Owner can accept Offer");
+        }
+
+        var offer = (offerRepository.findById(offerId)).get();
+        offer.setStatus(status);
+        offerRepository.save(offer);
+        return offer;
+    }
+
+    public GenericActivityResponse ownerAcceptOffer(AcceptOfferRequest model) {
+        var offer = changeOfferStatus(model.getOfferId(), OfferStatus.OwnerAccepted);
+        var property = offer.getProperty();
+        property.setStatus(PropertyStatus.Pending);
+        propertyRepository.save(property);
+        return new GenericActivityResponse(true, "Offer Accepted", offer);
+    }
+
+    public GenericActivityResponse customerAcceptOffer(AcceptOfferRequest model) {
+        var offer = (offerRepository.findById(model.getOfferId())).get();
+        var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        if(!offer.getCustomer().getId().equals(user.getUserId())){//make sure customer can accept his offer only
+            throw new RuntimeException("Customer can only accept his offer only");
+        }
+        if(!offer.getStatus().equals(OfferStatus.OwnerAccepted)){
+            throw new RuntimeException("Customer can only accept once owner is accepted");
+        }
+        offer.setStatus(OfferStatus.CustomerAccepted);
+        var property = offer.getProperty();
+        property.setStatus(PropertyStatus.Contingent);
+        propertyRepository.save(property);
+        offerRepository.save(offer);
+        return new GenericActivityResponse(true, "Offer Accepted", offer);
+    }
+    public GenericActivityResponse ownerCancelOffer(AcceptOfferRequest model) {
+        var offer = changeOfferStatus(model.getOfferId(), OfferStatus.cancelled);
+        return new GenericActivityResponse(true, "Offer Cancelled", offer);
+    }
+
+
 }

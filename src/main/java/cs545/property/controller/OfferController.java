@@ -1,9 +1,9 @@
 package cs545.property.controller;
 
-import cs545.property.config.JwtHelper;
-import cs545.property.config.UserDetailDto;
+
+import cs545.property.domain.Offer;
 import cs545.property.domain.Users;
-import cs545.property.dto.UserDto;
+import cs545.property.dto.AcceptOfferRequest;
 import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
@@ -12,8 +12,6 @@ import cs545.property.services.OfferService;
 import cs545.property.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +28,7 @@ public class OfferController {
     private final UserService userService;
 
     @GetMapping("/offers")
-    public List<OfferDto> findAll(){
+    public List<OfferDto> findAll() {
         return offerService.findAll();
     }
 
@@ -50,8 +48,7 @@ public class OfferController {
 
     @PostMapping("/properties/{propertyId}/offers")
     public GenericActivityResponse save(HttpServletRequest request, @RequestBody CreateOfferRequest offerRequest, @PathVariable long propertyId) {
-        Users user = userService.getLoggedInUser(request);
-        return offerService.create(user, offerRequest, propertyId);
+        return offerService.create(offerRequest, propertyId);
     }
 
     @PutMapping("/properties/{property_id}/offers/{id}")
@@ -61,7 +58,37 @@ public class OfferController {
     }
 
     @GetMapping("/properties/{propertyId}/offers")
-    public List<OfferDto> findPropertyOffers(@PathVariable long propertyId) {
+    public List<Offer> findPropertyOffers(@PathVariable long propertyId) {
         return offerService.findByPropertyId(propertyId);
+    }
+
+    @PostMapping("/offers/customer/{offerId}/accept")
+    public GenericActivityResponse customerAcceptOffer(@PathVariable Long offerId, @RequestBody AcceptOfferRequest model) {
+        try {
+            return offerService.customerAcceptOffer(new AcceptOfferRequest(offerId));
+        } catch (RuntimeException ex) {
+            return new GenericActivityResponse(false, ex.getMessage());
+        }
+
+    }
+
+    @PostMapping("/offers/owner/{offerId}/accept")
+    public GenericActivityResponse ownerAcceptOffer(@PathVariable Long offerId, @RequestBody AcceptOfferRequest model) {
+        try {
+            return offerService.ownerAcceptOffer(new AcceptOfferRequest(offerId));
+        } catch (RuntimeException ex) {
+            return new GenericActivityResponse(false, ex.getMessage());
+        }
+
+    }
+
+    @PostMapping("/offers/owner/{offerId}/cancel")
+    public GenericActivityResponse ownerCancelOffer(@PathVariable Long offerId, @RequestBody AcceptOfferRequest model) {
+        try {
+            return offerService.ownerCancelOffer(new AcceptOfferRequest(offerId));
+        } catch (RuntimeException ex) {
+            return new GenericActivityResponse(false, ex.getMessage());
+        }
+
     }
 }
