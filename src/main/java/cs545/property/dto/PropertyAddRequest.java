@@ -1,12 +1,7 @@
 package cs545.property.dto;
 
-import cs545.property.domain.Address;
-import cs545.property.domain.PropertyImage;
-import cs545.property.domain.enums.PropertyType;
-import jakarta.persistence.*;
+import cs545.property.constant.PropertyType;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class PropertyAddRequest {

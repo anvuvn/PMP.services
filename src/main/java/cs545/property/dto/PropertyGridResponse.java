@@ -2,7 +2,7 @@ package cs545.property.dto;
 
 import cs545.property.constant.PropertyStatus;
 import cs545.property.domain.Property;
-import cs545.property.domain.enums.PropertyType;
+import cs545.property.constant.PropertyType;
 import cs545.property.util.ImageUtil;
 import lombok.Data;
 
