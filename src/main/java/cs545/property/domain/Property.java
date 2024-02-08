@@ -40,6 +40,6 @@ public class Property {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="img3d_id")
-    private Image3D image3d;
+    private Image3D image3d= new Image3D();
 
 }
