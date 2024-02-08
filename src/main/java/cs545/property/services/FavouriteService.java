@@ -26,6 +26,10 @@ public class FavouriteService {
     PropertyRepo propertyRepo;
 
     public FavouriteResponseDto add(FavouriteCreateRequest model) {
+        var fav = favouriteRepo.findByUserIdAndPropertyId(model.getUserId(), model.getPropertyId());
+        if (fav != null && fav.size() > 0) {
+            return null;
+        }
         var f = new Favourite();
         var user = userRepository.getReferenceById(model.getUserId());
         var property = propertyRepo.getReferenceById(model.getPropertyId());
@@ -35,6 +39,7 @@ public class FavouriteService {
         if (property == null) {
             throw new RuntimeException("property not found");
         }
+
         f.setUser(user);
         f.setProperty(property);
         favouriteRepo.save(f);

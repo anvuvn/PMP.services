@@ -18,7 +18,11 @@ public class FavouriteController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody FavouriteCreateRequest model) {
-        return ResponseEntity.ok(service.add(model));
+        var response = service.add(model);
+        if (response == null) {
+            return ResponseEntity.status(400).build();
+        }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/my")
@@ -30,10 +34,10 @@ public class FavouriteController {
 
     @DeleteMapping("/{favId}")
     public ResponseEntity<?> deleteFav(@PathVariable Long favId) {
-        try{
+        try {
             if (!service.removeFavourite(favId))
                 return ResponseEntity.status(404).build();
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.status(403).build();
         }
         return ResponseEntity.status(200).build();

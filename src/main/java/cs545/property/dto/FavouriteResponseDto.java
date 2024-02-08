@@ -2,8 +2,10 @@ package cs545.property.dto;
 
 import cs545.property.domain.Favourite;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class FavouriteResponseDto {
     Long id;
     UserDto user;
