@@ -40,4 +40,8 @@ public class Property {
 
     private Integer numberOfRoom;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name="img3d_id")
+    private Image3D image3d;
+
 }

@@ -14,6 +14,7 @@ import cs545.property.dto.request.ChangeOfferStatusRequest;
 import cs545.property.dto.request.CreateOfferRequest;
 import cs545.property.dto.response.GenericActivityResponse;
 import cs545.property.exceptions.ErrorException;
+import cs545.property.repository.CustomerRepo;
 import cs545.property.repository.OfferRepo;
 import cs545.property.repository.PropertyRepo;
 import cs545.property.repository.UserRepository;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
@@ -33,6 +35,7 @@ import java.util.List;
 @Transactional
 public class OfferService {
     private final PropertyRepo propertyRepository;
+    private final CustomerRepo customerRepository;
     private final OfferRepo offerRepository;
     private final ListMapper listMapper;
     private final ModelMapper modelMapper;
@@ -54,7 +57,6 @@ public class OfferService {
     }
 
     public List<OfferDto> findCustomerOffersByPropertyId(Users user, long propertyId) {
-
         return listMapper.map(offerRepository.findByCustomerIdAndPropertyId(user.getId(), propertyId), OfferDto.class);
     }
 
@@ -65,9 +67,14 @@ public class OfferService {
 
 
     public GenericActivityResponse create(CreateOfferRequest offerRequest, long propertyId) {
-        Offer offer = modelMapper.map(offerRequest, Offer.class);
+        Offer offer = new Offer();
+        offer.setAmount(offerRequest.getAmount());
+        offer.setMessage(offerRequest.getMessage());
+        offer.setDate(new Date());
+
+
         var customer = userRepository.getReferenceById(offerRequest.getUserId());
-        Property property = propertyRepository.findById(propertyId).get();
+        var property = propertyRepository.findById(propertyId).get();
 
         try {
             validateOfferCreate(property);
@@ -76,11 +83,10 @@ public class OfferService {
         }
 
         offer.setStatus(OfferStatus.created);
-
         offer.setProperty(property);
         offer.setCustomer(customer);
 
-        syncPropertyStatusOnCreate(property);
+        property.setStatus(PropertyStatus.Pending);
 
         offerRepository.save(offer);
         return new GenericActivityResponse(true, "Offer created.", offer);
@@ -193,4 +199,17 @@ public class OfferService {
     }
 
 
+    public OfferDto acceptOffer(Long id) {
+        var offer = offerRepository.getReferenceById(id);
+        offer.setStatus(OfferStatus.contingent);
+        offerRepository.save(offer);
+        return new OfferDto(offer);
+    }
+
+    public OfferDto cancelOffer(Long id) {
+        var offer = offerRepository.getReferenceById(id);
+        offer.setStatus(OfferStatus.cancelled);
+        offerRepository.save(offer);
+        return new OfferDto(offer);
+    }
 }

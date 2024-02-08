@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateOfferRequest {
+    private Long userId;
+    private Long propertyId;
     private BigDecimal amount;
     private String message;
 }

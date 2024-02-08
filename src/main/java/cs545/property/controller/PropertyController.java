@@ -1,6 +1,7 @@
 package cs545.property.controller;
 
 import cs545.property.config.UserDetailDto;
+import cs545.property.constant.PropertyStatus;
 import cs545.property.domain.Property;
 import cs545.property.dto.*;
 import cs545.property.services.PropertyService;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/properties")
-@CrossOrigin(origins ="http://localhost:3000")
+@CrossOrigin(origins ="http://localhost:3000", methods = {RequestMethod.PUT,RequestMethod.GET,RequestMethod.POST, RequestMethod.DELETE})
 public class PropertyController {
 
 
@@ -86,6 +87,11 @@ public class PropertyController {
     {
         var prop = propertyService.updateProperty(id, property);
         return ResponseEntity.ok(prop);
+    }
+
+    @PutMapping("/{id}/status/{status}")
+    public ResponseEntity<?> changePropertyStatus(@PathVariable Long id, @PathVariable PropertyStatus status) {
+        return ResponseEntity.ok(propertyService.changePropertyStatus(id, status));
     }
 
 }
