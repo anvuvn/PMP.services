@@ -22,8 +22,7 @@ public class Address {
 
     private String postalCode;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    private State state;
+    private String state;
 
     public Address(AddressDto a){
         id = a.getId();
@@ -31,6 +30,6 @@ public class Address {
         line2 = a.getLine2();
         city =a.getCity();
         postalCode = a.getPostalCode();
-        //state = a.getState();
+        state = a.getState();
     }
 }
