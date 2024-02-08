@@ -78,6 +78,9 @@ public class PropertyService {
 
     @Transactional
     public List<PropertyResponseDto> getPropertiesByOwnerId(Long ownerId) {
+
+        //for admin only
+        //.filter(p -> !p.getStatus().equals(PropertyStatus.Deleted) && !p.getStatus().equals(PropertyStatus.Waiting) )
         return propertyRepo.findByOwnerId(ownerId).stream().filter(p -> !p.getStatus().equals(PropertyStatus.Deleted)).map(p -> new PropertyResponseDto(p)).toList();
     }
 
@@ -123,7 +126,7 @@ public class PropertyService {
             var p = builder.equal(root.get("numberOfRoom"), model.getNumberOfRoom());
             predicates.add(p);
         }
-
+        predicates.add(root.get("status").in(PropertyStatus.Deleted, PropertyStatus.Waiting));
         var criteria = builder.and(predicates.toArray(new Predicate[0]));
         query.where(criteria);
         var result = entityManager.createQuery(query).getResultList();
