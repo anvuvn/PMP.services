@@ -97,7 +97,15 @@ public class OfferController {
         } catch (RuntimeException ex) {
             return new GenericActivityResponse(false, ex.getMessage());
         }
+    }
 
+    @PostMapping("/offers/owner/{offerId}/accept-after-customer")
+    public GenericActivityResponse ownerAcceptOfferAfterCustomer(@PathVariable Long offerId, @RequestBody AcceptOfferRequest model) {
+        try {
+            return offerService.ownerAcceptOfferAfterCustomer(new AcceptOfferRequest(offerId));
+        } catch (RuntimeException ex) {
+            return new GenericActivityResponse(false, ex.getMessage());
+        }
     }
 
     @PostMapping("/offers/owner/{offerId}/cancel")

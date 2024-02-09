@@ -183,6 +183,14 @@ public class OfferService {
         return new GenericActivityResponse(true, "Offer Accepted", offer);
     }
 
+    public GenericActivityResponse ownerAcceptOfferAfterCustomer(AcceptOfferRequest model) {
+        var offer = changeOfferStatus(model.getOfferId(), OfferStatus.completed);
+        var property = offer.getProperty();
+        property.setStatus(PropertyStatus.Sold);
+        propertyRepository.save(property);
+        return new GenericActivityResponse(true, "Offer Completed", offer);
+    }
+
     public GenericActivityResponse customerAcceptOffer(AcceptOfferRequest model) {
         var offer = (offerRepository.findById(model.getOfferId())).get();
         var user = (UserDetailDto) SecurityContextHolder.getContext().getAuthentication().getDetails();
